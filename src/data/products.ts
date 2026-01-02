@@ -84,16 +84,20 @@ export const products: Product[] = [
         description: "View service health and container status"
       },
       {
+        command: "npm-helper show-admin",
+        description: "Retrieve the current admin username"
+      },
+      {
         command: "npm-helper rotate-admin",
-        description: "Securely reset the admin password"
+        description: "Securely generate and reset the admin password"
       },
       {
         command: "npm-helper diagnostics",
-        description: "Generate technical health reports"
+        description: "Generate a technical health report for support"
       },
       {
         command: "npm-helper update-os",
-        description: "One-click security patching for the base Ubuntu system"
+        description: "One-click Ubuntu security patching"
       }
     ],
     terraform: `module "nginx_proxy_manager" {
@@ -150,15 +154,16 @@ Resources:
       "╠══════════════════════════════════════════════════════════════╣",
       "║  Instance ID: i-0a1b2c3d4e5f67890                            ║",
       "║  Version: 2.13.5-hardened                                    ║",
-      "║  Status: INITIALIZED                                         ║",
+      "║  Status: INITIALIZED ✓                                       ║",
       "╠══════════════════════════════════════════════════════════════╣",
-      "║  Admin Panel: https://your-domain:81                        ║",
-      "║  Credentials: /root/npm-admin-credentials.txt               ║",
-      "╠══════════════════════════════════════════════════════════════╣",
-      "║  Quick Commands:                                             ║",
-      "║    npm-helper status        - View service health           ║",
-      "║    npm-helper rotate-admin  - Reset admin password          ║",
-      "║    npm-helper diagnostics   - Generate health report        ║",
+      "║  ONBOARDING CHECKLIST                                        ║",
+      "║  ────────────────────────────────────────────────────────────║",
+      "║  [1] Retrieve admin credentials:                             ║",
+      "║      sudo cat /root/npm-admin-credentials.txt                ║",
+      "║  [2] Access the Admin Panel:                                 ║",
+      "║      https://<your-ip>:81                                    ║",
+      "║  [3] Configure your first proxy host                         ║",
+      "║  [4] Run 'npm-helper status' to verify health                ║",
       "╚══════════════════════════════════════════════════════════════╝"
     ]
   },
