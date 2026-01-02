@@ -40,12 +40,12 @@ export const products: Product[] = [
     features: [
       {
         title: "Automated First-Boot Initialization",
-        description: "npm-init.py handles complete setup including SSL configuration, database initialization, and admin credential generation.",
+        description: "npm-init.py handles complete setup including SSL configuration, database initialization, and admin credential generation stored securely at /root/npm-admin-credentials.txt.",
         icon: "Zap"
       },
       {
         title: "Atomic Backups",
-        description: "npm-backup creates point-in-time snapshots with automatic rotation and S3 sync capabilities.",
+        description: "npm-backup and npm-restore tools leverage SQLite hot-backup technology for zero-downtime protection with automatic rotation and S3 sync capabilities.",
         icon: "Database"
       },
       {
@@ -81,19 +81,19 @@ export const products: Product[] = [
     cliCommands: [
       {
         command: "npm-helper status",
-        description: "Display service health, SSL expiry, and resource utilization"
+        description: "View service health and container status"
       },
       {
-        command: "npm-helper rotate-credentials",
-        description: "Securely rotate admin credentials with audit logging"
+        command: "npm-helper rotate-admin",
+        description: "Securely reset the admin password"
       },
       {
-        command: "npm-helper backup --sync-s3",
-        description: "Create backup and sync to configured S3 bucket"
+        command: "npm-helper diagnostics",
+        description: "Generate technical health reports"
       },
       {
-        command: "npm-helper update --dry-run",
-        description: "Preview updates before applying with rollback point"
+        command: "npm-helper update-os",
+        description: "One-click security patching for the base Ubuntu system"
       }
     ],
     terraform: `module "nginx_proxy_manager" {
@@ -103,6 +103,9 @@ export const products: Product[] = [
   instance_type    = "t3.small"
   vpc_id           = var.vpc_id
   subnet_id        = var.subnet_id
+  
+  # AMI Filter
+  ami_filter       = "npm-hardened-edition-ubuntu22-*"
   
   # Security Configuration
   allowed_cidrs    = ["10.0.0.0/8"]
@@ -146,17 +149,16 @@ Resources:
       "║     NORTHSTAR CLOUD SOLUTIONS - NPM Hardened Edition        ║",
       "╠══════════════════════════════════════════════════════════════╣",
       "║  Instance ID: i-0a1b2c3d4e5f67890                            ║",
-      "║  Version: 2.11.3-hardened                                    ║",
+      "║  Version: 2.13.5-hardened                                    ║",
       "║  Status: INITIALIZED                                         ║",
       "╠══════════════════════════════════════════════════════════════╣",
       "║  Admin Panel: https://your-domain:81                        ║",
-      "║  Username: admin@northstar.local                            ║",
-      "║  Password: **Retrieved from SSM Parameter Store**           ║",
+      "║  Credentials: /root/npm-admin-credentials.txt               ║",
       "╠══════════════════════════════════════════════════════════════╣",
       "║  Quick Commands:                                             ║",
       "║    npm-helper status        - View service health           ║",
-      "║    npm-helper backup        - Create backup snapshot        ║",
-      "║    npm-helper logs          - Tail application logs         ║",
+      "║    npm-helper rotate-admin  - Reset admin password          ║",
+      "║    npm-helper diagnostics   - Generate health report        ║",
       "╚══════════════════════════════════════════════════════════════╝"
     ]
   },

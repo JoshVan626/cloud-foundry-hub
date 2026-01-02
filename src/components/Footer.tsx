@@ -12,7 +12,7 @@ export const Footer = () => {
               <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-accent-foreground" />
               </div>
-              <span className="font-bold text-lg text-foreground">Northstar</span>
+              <span className="font-bold text-lg text-foreground">Northstar Cloud Solutions</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Cloud Solutions Foundry. Production-ready infrastructure appliances for AWS.
@@ -57,7 +57,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          © 2026 Northstar Cloud Solutions. All rights reserved.
+          © 2026 Northstar Cloud Solutions LLC. All rights reserved.
         </div>
       </div>
     </footer>
