@@ -6,6 +6,7 @@ import { CapabilityTag } from "@/components/CapabilityTag";
 import { CodeSwitcher } from "@/components/CodeSwitcher";
 import { CLIShowcase } from "@/components/CLIShowcase";
 import { TerminalSimulator } from "@/components/TerminalSimulator";
+import { MarketplaceNotifyModal } from "@/components/MarketplaceNotifyModal";
 import { 
   ArrowLeft, 
   Zap, 
@@ -15,7 +16,8 @@ import {
   Lock, 
   Eye,
   Server,
-  CheckCircle2
+  CheckCircle2,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -76,9 +78,25 @@ const ProductDetail = () => {
             {product.name}
           </h1>
           <p className="text-xl text-accent font-medium mb-4">{product.tagline}</p>
-          <p className="text-lg text-muted-foreground max-w-3xl">
+          <p className="text-lg text-muted-foreground max-w-3xl mb-8">
             {product.description}
           </p>
+          
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap gap-4">
+            <MarketplaceNotifyModal>
+              <Button variant="accent" size="lg">
+                Get Started
+                <ExternalLink className="w-4 h-4 ml-2" />
+              </Button>
+            </MarketplaceNotifyModal>
+            <MarketplaceNotifyModal>
+              <Button variant="outline" size="lg">
+                View on AWS Marketplace
+                <ExternalLink className="w-4 h-4 ml-2" />
+              </Button>
+            </MarketplaceNotifyModal>
+          </div>
         </section>
 
         {/* Problem / Solution */}

@@ -33,6 +33,7 @@ export const FoundryCatalog = () => {
               category={product.category}
               icon={product.icon}
               capabilities={product.capabilities}
+              comingSoon={product.comingSoon}
             />
           ))}
         </div>
