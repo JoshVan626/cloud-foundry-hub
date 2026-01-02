@@ -11,10 +11,14 @@ const motdLines = [
   "║  Version: 2.13.5-hardened                                    ║",
   "║  Status: INITIALIZED ✓                                       ║",
   "╠══════════════════════════════════════════════════════════════╣",
-  "║  Admin Panel: https://your-domain:81                        ║",
-  "║  Credentials: /root/npm-admin-credentials.txt               ║",
-  "╠══════════════════════════════════════════════════════════════╣",
-  "║  Run 'npm-helper status' for service health                 ║",
+  "║  ONBOARDING CHECKLIST                                        ║",
+  "║  ────────────────────────────────────────────────────────────║",
+  "║  [1] Retrieve admin credentials:                             ║",
+  "║      sudo cat /root/npm-admin-credentials.txt                ║",
+  "║  [2] Access the Admin Panel:                                 ║",
+  "║      https://<your-ip>:81                                    ║",
+  "║  [3] Configure your first proxy host                         ║",
+  "║  [4] Run 'npm-helper status' to verify health                ║",
   "╚══════════════════════════════════════════════════════════════╝",
 ];
 
