@@ -6,6 +6,7 @@ export interface Product {
   category: string;
   icon: string;
   capabilities: string[];
+  comingSoon?: boolean;
   features: {
     title: string;
     description: string;
@@ -174,7 +175,8 @@ Resources:
     description: "Enterprise container orchestration with GitOps workflows, RBAC, and automated compliance scanning.",
     category: "Containers",
     icon: "Container",
-    capabilities: ["Automated Ops", "Hardened", "GitOps Ready"],
+    capabilities: ["Coming Soon", "Automated Ops", "Hardened", "GitOps Ready"],
+    comingSoon: true,
     features: [],
     security: [],
     observability: [],
@@ -190,7 +192,8 @@ Resources:
     description: "HA Vault cluster with auto-unseal, audit logging, and AWS secrets engine pre-configured.",
     category: "Security",
     icon: "Lock",
-    capabilities: ["HA Cluster", "Hardened", "AWS Native", "Compliant"],
+    capabilities: ["Coming Soon", "HA Cluster", "Hardened", "AWS Native", "Compliant"],
+    comingSoon: true,
     features: [],
     security: [],
     observability: [],

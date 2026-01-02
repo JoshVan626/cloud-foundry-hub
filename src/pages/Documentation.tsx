@@ -7,51 +7,136 @@ import {
   Rocket, 
   Shield, 
   Terminal, 
-  Settings,
-  ChevronRight
+  Database,
+  Activity,
+  RefreshCw,
+  ChevronRight,
+  Copy,
+  Check,
+  AlertTriangle,
+  Info,
+  CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { docSections, getDocContent, DocBlock } from "@/data/documentation";
 
-const sidebarItems = [
-  {
-    title: "Getting Started",
-    icon: Rocket,
-    items: [
-      { label: "Quickstart", active: true },
-      { label: "Prerequisites" },
-      { label: "AWS Setup" },
-    ],
-  },
-  {
-    title: "Security",
-    icon: Shield,
-    items: [
-      { label: "Security Hardening" },
-      { label: "Firewall Configuration" },
-      { label: "SSL/TLS Setup" },
-    ],
-  },
-  {
-    title: "Operations",
-    icon: Terminal,
-    items: [
-      { label: "Backup & Restore" },
-      { label: "Updates" },
-      { label: "Monitoring" },
-    ],
-  },
-  {
-    title: "Configuration",
-    icon: Settings,
-    items: [
-      { label: "Environment Variables" },
-      { label: "Customization" },
-    ],
-  },
-];
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Rocket,
+  Shield,
+  Terminal,
+  Database,
+  Activity,
+  RefreshCw,
+};
 
 const Documentation = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeDocId, setActiveDocId] = useState("quickstart");
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const docContent = getDocContent(activeDocId);
+
+  const copyToClipboard = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  const getBreadcrumb = () => {
+    for (const section of docSections) {
+      const item = section.items.find(i => i.id === activeDocId);
+      if (item) {
+        return { section: section.title, item: item.label };
+      }
+    }
+    return { section: "Docs", item: "Unknown" };
+  };
+
+  const breadcrumb = getBreadcrumb();
+
+  const renderBlock = (block: DocBlock, index: number) => {
+    switch (block.type) {
+      case "paragraph":
+        return (
+          <p key={index} className="text-muted-foreground mb-4 leading-relaxed">
+            {block.content}
+          </p>
+        );
+      case "heading":
+        return (
+          <h2 key={index} className="text-2xl font-semibold text-foreground mb-4 mt-8">
+            {block.content}
+          </h2>
+        );
+      case "code":
+        return (
+          <div key={index} className="relative bg-terminal rounded-lg border border-terminal-border p-4 mb-6 font-mono text-sm overflow-x-auto">
+            <button
+              onClick={() => copyToClipboard(block.content || "")}
+              className="absolute top-3 right-3 p-1.5 rounded bg-terminal-muted/20 hover:bg-terminal-muted/40 transition-colors"
+            >
+              {copiedCode === block.content ? (
+                <Check className="w-4 h-4 text-terminal-green" />
+              ) : (
+                <Copy className="w-4 h-4 text-terminal-muted" />
+              )}
+            </button>
+            <pre className="text-terminal-text whitespace-pre-wrap">
+              {block.content?.split('\n').map((line, i) => (
+                <div key={i} className={cn(
+                  line.startsWith('#') ? "text-terminal-muted" : "text-terminal-text"
+                )}>
+                  {line}
+                </div>
+              ))}
+            </pre>
+          </div>
+        );
+      case "list":
+        return (
+          <ul key={index} className="space-y-2 text-muted-foreground mb-6 list-none pl-0">
+            {block.items?.map((item, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        );
+      case "prereq":
+        return (
+          <div key={index} className="bg-card border border-border rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4 mt-0">Prerequisites</h2>
+            <ul className="space-y-2 text-muted-foreground list-none pl-0">
+              {block.items?.map((item, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      case "note":
+        const noteStyles = {
+          info: "bg-accent/5 border-accent/20 text-accent",
+          warning: "bg-amber-500/5 border-amber-500/20 text-amber-400",
+          success: "bg-emerald-500/5 border-emerald-500/20 text-emerald-400",
+        };
+        const NoteIcon = block.variant === "warning" ? AlertTriangle : block.variant === "success" ? CheckCircle2 : Info;
+        return (
+          <div key={index} className={cn(
+            "flex gap-3 p-4 rounded-lg border mb-6",
+            noteStyles[block.variant || "info"]
+          )}>
+            <NoteIcon className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground">{block.content}</p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -75,31 +160,34 @@ const Documentation = () => {
 
             {/* Nav Items */}
             <nav className="space-y-6">
-              {sidebarItems.map((section) => (
-                <div key={section.title}>
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                    <section.icon className="w-4 h-4 text-accent" />
-                    {section.title}
+              {docSections.map((section) => {
+                const IconComponent = iconMap[section.icon] || Rocket;
+                return (
+                  <div key={section.id}>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
+                      <IconComponent className="w-4 h-4 text-accent" />
+                      {section.title}
+                    </div>
+                    <ul className="space-y-1 ml-6">
+                      {section.items.map((item) => (
+                        <li key={item.id}>
+                          <button
+                            onClick={() => setActiveDocId(item.id)}
+                            className={cn(
+                              "block w-full text-left text-sm py-1.5 px-2 rounded transition-colors",
+                              activeDocId === item.id
+                                ? "bg-accent/10 text-accent font-medium"
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                            )}
+                          >
+                            {item.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="space-y-1 ml-6">
-                    {section.items.map((item) => (
-                      <li key={item.label}>
-                        <a
-                          href="#"
-                          className={cn(
-                            "block text-sm py-1.5 px-2 rounded transition-colors",
-                            item.active
-                              ? "bg-accent/10 text-accent font-medium"
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                          )}
-                        >
-                          {item.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                );
+              })}
             </nav>
           </div>
         </aside>
@@ -112,83 +200,56 @@ const Documentation = () => {
               <BookOpen className="w-4 h-4" />
               <span>Docs</span>
               <ChevronRight className="w-4 h-4" />
-              <span>Getting Started</span>
+              <span>{breadcrumb.section}</span>
               <ChevronRight className="w-4 h-4" />
-              <span className="text-foreground">Quickstart</span>
+              <span className="text-foreground">{breadcrumb.item}</span>
             </div>
 
             {/* Content */}
-            <article className="prose prose-invert max-w-none">
-              <h1 className="text-4xl font-bold text-foreground mb-4">Quickstart</h1>
-              <p className="text-lg text-muted-foreground mb-8">
-                Get your Northstar appliance up and running in under 5 minutes.
-              </p>
+            {docContent ? (
+              <article className="prose prose-invert max-w-none">
+                <h1 className="text-4xl font-bold text-foreground mb-4">
+                  {docContent.title}
+                </h1>
+                <p className="text-lg text-muted-foreground mb-8">
+                  {docContent.description}
+                </p>
 
-              <div className="bg-card border border-border rounded-lg p-6 mb-8">
-                <h2 className="text-xl font-semibold text-foreground mb-4 mt-0">Prerequisites</h2>
-                <ul className="space-y-2 text-muted-foreground list-none pl-0">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                    AWS Account with EC2 launch permissions
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                    VPC with public subnet (for proxy use cases)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                    Terraform 1.0+ or AWS CLI configured
-                  </li>
-                </ul>
-              </div>
+                {docContent.content.map((block, index) => renderBlock(block, index))}
 
-              <h2 className="text-2xl font-semibold text-foreground mb-4">Step 1: Deploy the AMI</h2>
-              <p className="text-muted-foreground mb-4">
-                Use our Terraform module for the fastest deployment path:
-              </p>
-              
-              <div className="bg-terminal rounded-lg border border-terminal-border p-4 mb-8 font-mono text-sm">
-                <div className="text-terminal-muted"># Initialize and apply</div>
-                <div className="text-terminal-green">$ terraform init</div>
-                <div className="text-terminal-green">$ terraform apply</div>
-              </div>
-
-              <h2 className="text-2xl font-semibold text-foreground mb-4">Step 2: Access Your Instance</h2>
-              <p className="text-muted-foreground mb-4">
-                Once deployed, SSH into your instance to retrieve your admin credentials:
-              </p>
-
-              <div className="bg-terminal rounded-lg border border-terminal-border p-4 mb-8 font-mono text-sm">
-                <div className="text-terminal-green">$ ssh -i your-key.pem admin@your-instance-ip</div>
-                <div className="text-terminal-text mt-2">
-                  # Credentials are displayed in the MOTD and stored in SSM Parameter Store
+                {/* What's Next */}
+                <div className="mt-12 p-6 bg-accent/5 border border-accent/20 rounded-lg">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">What's Next?</h3>
+                  <ul className="space-y-2 text-muted-foreground">
+                    {docSections.map((section) => (
+                      section.items
+                        .filter(item => item.id !== activeDocId)
+                        .slice(0, 1)
+                        .map(item => (
+                          <li key={item.id}>
+                            <button
+                              onClick={() => setActiveDocId(item.id)}
+                              className="text-accent hover:underline"
+                            >
+                              {item.label}
+                            </button>
+                            <span className="text-muted-foreground"> — {section.title}</span>
+                          </li>
+                        ))
+                    )).flat().slice(0, 3)}
+                  </ul>
                 </div>
+              </article>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">Documentation not found.</p>
               </div>
-
-              <h2 className="text-2xl font-semibold text-foreground mb-4">Step 3: Configure Your Proxy</h2>
-              <p className="text-muted-foreground mb-4">
-                Access the admin panel at <code className="text-accent">https://your-domain:81</code> and start 
-                configuring your proxy hosts, SSL certificates, and access lists.
-              </p>
-
-              <div className="mt-12 p-6 bg-accent/5 border border-accent/20 rounded-lg">
-                <h3 className="text-lg font-semibold text-foreground mb-2">What's Next?</h3>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>
-                    <a href="#" className="text-accent hover:underline">Security Hardening Guide</a> — Review the pre-configured security controls
-                  </li>
-                  <li>
-                    <a href="#" className="text-accent hover:underline">Backup Configuration</a> — Set up automated backups to S3
-                  </li>
-                  <li>
-                    <a href="#" className="text-accent hover:underline">Monitoring Setup</a> — Configure CloudWatch dashboards and alerts
-                  </li>
-                </ul>
-              </div>
-            </article>
+            )}
           </div>
         </main>
       </div>
+
+      <Footer />
     </div>
   );
 };

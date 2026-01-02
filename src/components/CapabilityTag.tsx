@@ -13,6 +13,7 @@ const tagVariants: Record<string, string> = {
   "HA Cluster": "bg-violet-500/10 text-violet-400 border-violet-500/20",
   "GitOps Ready": "bg-blue-500/10 text-blue-400 border-blue-500/20",
   "Compliant": "bg-rose-500/10 text-rose-400 border-rose-500/20",
+  "Coming Soon": "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
 };
 
 export const CapabilityTag = ({ label, className }: CapabilityTagProps) => {
