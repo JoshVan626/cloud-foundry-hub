@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { 
@@ -75,6 +75,18 @@ const Documentation = () => {
     })).filter(section => section.items.length > 0);
   }, [searchQuery, selectedProductId]);
 
+  // Ensure the active doc belongs to the selected product (important for future multi-product catalogs)
+  useEffect(() => {
+    const productSections = docSections.filter(section => section.productId === selectedProductId);
+    const productDocIds = new Set(productSections.flatMap(section => section.items.map(item => item.id)));
+
+    if (productDocIds.size === 0) return;
+    if (productDocIds.has(activeDocId)) return;
+
+    const firstDocId = productSections[0]?.items[0]?.id;
+    if (firstDocId) setActiveDocId(firstDocId);
+  }, [activeDocId, selectedProductId]);
+
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
@@ -96,7 +108,8 @@ const Documentation = () => {
   };
 
   const getBreadcrumb = () => {
-    for (const section of docSections) {
+    const productSections = docSections.filter(section => section.productId === selectedProductId);
+    for (const section of productSections) {
       const item = section.items.find(i => i.id === activeDocId);
       if (item) {
         return { 

@@ -7,7 +7,7 @@ import { MarketplaceNotifyModal } from "./MarketplaceNotifyModal";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "The Foundry", href: "/#foundry" },
+  { label: "The Foundry", href: "/foundry" },
   { label: "Documentation", href: "/docs" },
 ];
 
