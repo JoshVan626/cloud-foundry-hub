@@ -1,7 +1,25 @@
+// Product definitions for multi-product documentation
+export interface Product {
+  id: string;
+  name: string;
+  shortName: string;
+  description: string;
+}
+
+export const products: Product[] = [
+  {
+    id: "nginx-proxy-manager",
+    name: "Nginx Proxy Manager – Hardened Edition",
+    shortName: "Nginx Proxy Manager",
+    description: "Enterprise-ready reverse proxy with automated SSL and security hardening",
+  },
+];
+
 export interface DocSection {
   id: string;
   title: string;
   icon: string;
+  productId: string;
   items: {
     id: string;
     label: string;
@@ -12,6 +30,7 @@ export interface DocContent {
   id: string;
   title: string;
   description: string;
+  productId: string;
   content: DocBlock[];
 }
 
@@ -29,6 +48,7 @@ export const docSections: DocSection[] = [
     id: "getting-started",
     title: "Getting Started",
     icon: "Rocket",
+    productId: "nginx-proxy-manager",
     items: [
       { id: "quickstart", label: "Quickstart" },
       { id: "multi-app", label: "Multi-App Setup" },
@@ -38,6 +58,7 @@ export const docSections: DocSection[] = [
     id: "security",
     title: "Security & Hardening",
     icon: "Shield",
+    productId: "nginx-proxy-manager",
     items: [
       { id: "security-hardening", label: "Security Overview" },
     ],
@@ -46,6 +67,7 @@ export const docSections: DocSection[] = [
     id: "operations",
     title: "Operations",
     icon: "Terminal",
+    productId: "nginx-proxy-manager",
     items: [
       { id: "operations", label: "Lifecycle & CLI" },
       { id: "troubleshooting", label: "Troubleshooting" },
@@ -55,6 +77,7 @@ export const docSections: DocSection[] = [
     id: "backup",
     title: "Backup & Restore",
     icon: "Database",
+    productId: "nginx-proxy-manager",
     items: [
       { id: "backup-restore", label: "Backup & Restore" },
     ],
@@ -63,6 +86,7 @@ export const docSections: DocSection[] = [
     id: "monitoring",
     title: "Monitoring",
     icon: "Activity",
+    productId: "nginx-proxy-manager",
     items: [
       { id: "monitoring", label: "CloudWatch Integration" },
     ],
@@ -71,6 +95,7 @@ export const docSections: DocSection[] = [
     id: "upgrades",
     title: "Upgrades",
     icon: "RefreshCw",
+    productId: "nginx-proxy-manager",
     items: [
       { id: "upgrades", label: "AMI Upgrades" },
       { id: "roadmap", label: "Roadmap" },
@@ -82,7 +107,8 @@ export const docContents: Record<string, DocContent> = {
   quickstart: {
     id: "quickstart",
     title: "Quickstart",
-    description: "Go from AMI to a running Nginx Proxy Manager admin panel in minutes.",
+    description: "Go from AMI to a running Nginx Proxy Manager – Hardened Edition admin panel in minutes.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "prereq",
@@ -154,7 +180,7 @@ Password: <generated-strong-password> (shown on first login only)`,
       {
         type: "note",
         variant: "info",
-        content: "Credentials are uniquely generated on first boot and displayed in the MOTD banner. For security, they are not re-printed on future logins.",
+        content: "Credentials are uniquely generated on first boot and saved in a root-only file at /root/npm-admin-credentials.txt. For security, they are displayed in the MOTD banner on first login only.",
       },
       {
         type: "subheading",
@@ -240,7 +266,8 @@ sudo npm-helper status`,
   "multi-app": {
     id: "multi-app",
     title: "Hosting Multiple Apps Behind NPM",
-    description: "A common use case: run multiple applications behind a single NPM instance on EC2.",
+    description: "A common use case: run multiple applications behind a single Nginx Proxy Manager – Hardened Edition instance on EC2.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "heading",
@@ -344,7 +371,8 @@ sudo npm-helper status`,
   "security-hardening": {
     id: "security-hardening",
     title: "Security & Hardening",
-    description: "This AMI ships with a conservative security baseline applied out of the box.",
+    description: "The Nginx Proxy Manager – Hardened Edition AMI ships with a conservative security baseline applied out of the box.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "heading",
@@ -479,7 +507,8 @@ sudo fail2ban-client set sshd unbanip <IP_ADDRESS>`,
   operations: {
     id: "operations",
     title: "Operations",
-    description: "Understanding the first-boot lifecycle, CLI tools, and day-to-day operations.",
+    description: "Understanding the first-boot lifecycle, CLI tools, and day-to-day operations for the Nginx Proxy Manager – Hardened Edition.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "heading",
@@ -646,7 +675,8 @@ sudo systemctl restart npm`,
   troubleshooting: {
     id: "troubleshooting",
     title: "Troubleshooting",
-    description: "Common issues and how to debug them.",
+    description: "Common issues and how to debug them for the Nginx Proxy Manager – Hardened Edition.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "heading",
@@ -836,7 +866,8 @@ sudo journalctl -u amazon-cloudwatch-agent`,
   "backup-restore": {
     id: "backup-restore",
     title: "Backup & Restore",
-    description: "Protecting your Nginx Proxy Manager data and TLS certificates with built-in backup and restore tooling.",
+    description: "Protecting your Nginx Proxy Manager – Hardened Edition data and TLS certificates with built-in backup and restore tooling.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "heading",
@@ -1045,7 +1076,8 @@ sudo npm-restore /var/backups/npm-YYYYMMDDHHMMSS.tar.gz`,
   monitoring: {
     id: "monitoring",
     title: "Monitoring & Metrics",
-    description: "CloudWatch integration for comprehensive observability – optional but pre-configured.",
+    description: "CloudWatch integration for comprehensive observability of your Nginx Proxy Manager – Hardened Edition – optional but pre-configured.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "heading",
@@ -1172,6 +1204,7 @@ sudo systemctl restart amazon-cloudwatch-agent.service`,
     id: "upgrades",
     title: "Upgrades",
     description: "How to think about upgrades for the Nginx Proxy Manager – Hardened Edition. The design philosophy is stability first.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "note",
@@ -1515,6 +1548,7 @@ sudo docker compose pull`,
     id: "roadmap",
     title: "Roadmap",
     description: "Planned future enhancements for the Nginx Proxy Manager – Hardened Edition.",
+    productId: "nginx-proxy-manager",
     content: [
       {
         type: "note",

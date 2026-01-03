@@ -17,10 +17,19 @@ import {
   Info,
   CheckCircle2,
   Menu,
-  X
+  X,
+  ChevronDown,
+  Package
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { docSections, getDocContent, DocBlock, docContents } from "@/data/documentation";
+import { docSections, getDocContent, DocBlock, docContents, products } from "@/data/documentation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Rocket,
@@ -36,15 +45,19 @@ const Documentation = () => {
   const [activeDocId, setActiveDocId] = useState("quickstart");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState("nginx-proxy-manager");
 
   const docContent = getDocContent(activeDocId);
+  const selectedProduct = products.find(p => p.id === selectedProductId);
 
-  // Filter sections based on search query
+  // Filter sections based on search query AND selected product
   const filteredSections = useMemo(() => {
-    if (!searchQuery.trim()) return docSections;
+    const productSections = docSections.filter(section => section.productId === selectedProductId);
+    
+    if (!searchQuery.trim()) return productSections;
     
     const query = searchQuery.toLowerCase();
-    return docSections.map(section => ({
+    return productSections.map(section => ({
       ...section,
       items: section.items.filter(item => {
         const content = docContents[item.id];
@@ -60,7 +73,7 @@ const Documentation = () => {
         return searchableText.includes(query) || item.label.toLowerCase().includes(query);
       })
     })).filter(section => section.items.length > 0);
-  }, [searchQuery]);
+  }, [searchQuery, selectedProductId]);
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -73,14 +86,27 @@ const Documentation = () => {
     setMobileMenuOpen(false);
   };
 
+  const handleProductChange = (productId: string) => {
+    setSelectedProductId(productId);
+    // Reset to first doc of new product
+    const firstSection = docSections.find(s => s.productId === productId);
+    if (firstSection && firstSection.items.length > 0) {
+      setActiveDocId(firstSection.items[0].id);
+    }
+  };
+
   const getBreadcrumb = () => {
     for (const section of docSections) {
       const item = section.items.find(i => i.id === activeDocId);
       if (item) {
-        return { section: section.title, item: item.label };
+        return { 
+          product: selectedProduct?.shortName || "Docs",
+          section: section.title, 
+          item: item.label 
+        };
       }
     }
-    return { section: "Docs", item: "Unknown" };
+    return { product: "Docs", section: "Docs", item: "Unknown" };
   };
 
   const breadcrumb = getBreadcrumb();
@@ -200,6 +226,28 @@ const Documentation = () => {
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}>
           <div className="p-6">
+            {/* Product Selector */}
+            <div className="mb-6">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
+                Product
+              </label>
+              <Select value={selectedProductId} onValueChange={handleProductChange}>
+                <SelectTrigger className="w-full bg-background border-border">
+                  <div className="flex items-center gap-2">
+                    <Package className="w-4 h-4 text-accent" />
+                    <SelectValue placeholder="Select product" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  {products.map((product) => (
+                    <SelectItem key={product.id} value={product.id}>
+                      {product.shortName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Search */}
             <div className="relative mb-6">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -258,9 +306,11 @@ const Documentation = () => {
         <main className="flex-1 lg:ml-72 p-6 lg:p-10">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8 flex-wrap">
               <BookOpen className="w-4 h-4" />
               <span>Docs</span>
+              <ChevronRight className="w-4 h-4" />
+              <span>{breadcrumb.product}</span>
               <ChevronRight className="w-4 h-4" />
               <span>{breadcrumb.section}</span>
               <ChevronRight className="w-4 h-4" />
@@ -283,7 +333,7 @@ const Documentation = () => {
                 <div className="mt-12 p-6 bg-accent/5 border border-accent/20 rounded-lg">
                   <h3 className="text-lg font-semibold text-foreground mb-4">What's Next?</h3>
                   <ul className="space-y-3 text-muted-foreground">
-                    {docSections.map((section) => (
+                    {filteredSections.map((section) => (
                       section.items
                         .filter(item => item.id !== activeDocId)
                         .slice(0, 1)
