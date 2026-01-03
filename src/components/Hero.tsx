@@ -25,18 +25,18 @@ const motdLines = [
 const keyBenefits = [
   {
     icon: Shield,
-    title: "Hardened by Default",
-    description: "Kernel-level tuning and pre-configured firewalls for maximum security out-of-the-box.",
+    title: "Automated Resilience",
+    description: "Built-in atomic backups, health monitoring, and rollback-safe updates.",
   },
   {
     icon: Cog,
-    title: "Automated Day-2 Ops",
-    description: "Built-in scripts for atomic backups, health monitoring, and rollback-safe updates.",
+    title: "Defense-in-Depth Security",
+    description: "Kernel hardening, pre-configured firewalls, and Fail2Ban out of the box.",
   },
   {
     icon: Cloud,
-    title: "AWS Native",
-    description: "Seamless integration with CloudWatch Logs and S3 for enterprise-grade observability and durability.",
+    title: "AWS-Native Observability",
+    description: "CloudWatch Logs and S3 integration for enterprise-grade visibility.",
   },
 ];
 
@@ -57,17 +57,16 @@ export const Hero = () => {
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-              <span className="text-foreground">Hardened, Auto-Updating</span>
+              <span className="text-foreground">Enterprise-Grade Hardening</span>
               <br />
-              <span className="text-foreground">Cloud Appliances.</span>
+              <span className="text-foreground">for Open Source</span>
               <br />
-              <span className="text-gradient">Zero-Touch Operations.</span>
+              <span className="text-gradient">Infrastructure.</span>
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
-              Enterprise-grade Open Source tools, delivered as production-ready AWS AMIs 
-              with built-in security, backups, and self-healing logic. Stop managing servers 
-              and start deploying.
+              Northstar Cloud Solutions delivers production-ready AWS appliances. 
+              We handle the security, backups, and Day-2 operations so you can focus on scaling.
             </p>
             
             <div className="flex flex-wrap gap-4">
