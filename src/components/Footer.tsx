@@ -1,6 +1,5 @@
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Sparkles, Github, Twitter, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png";
 
 export const Footer = () => {
   return (
@@ -9,8 +8,10 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={logo} alt="Northstar Cloud Solutions" className="h-9 w-9" />
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-accent-foreground" />
+              </div>
               <span className="font-bold text-lg text-foreground">Northstar Cloud Solutions</span>
             </Link>
             <p className="text-sm text-muted-foreground">
