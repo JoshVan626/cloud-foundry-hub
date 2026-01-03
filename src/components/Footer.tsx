@@ -56,8 +56,12 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          © 2026 Northstar Cloud Solutions LLC. All rights reserved.
+        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <span>© 2026 Northstar Cloud Solutions LLC. All rights reserved.</span>
+          <div className="flex gap-4">
+            <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+          </div>
         </div>
       </div>
     </footer>
