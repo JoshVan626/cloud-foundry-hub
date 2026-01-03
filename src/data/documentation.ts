@@ -16,11 +16,12 @@ export interface DocContent {
 }
 
 export interface DocBlock {
-  type: "paragraph" | "heading" | "code" | "list" | "note" | "prereq";
+  type: "paragraph" | "heading" | "subheading" | "code" | "list" | "note" | "prereq" | "table";
   content?: string;
   items?: string[];
   language?: string;
   variant?: "info" | "warning" | "success";
+  rows?: { label: string; value: string }[];
 }
 
 export const docSections: DocSection[] = [
@@ -30,6 +31,7 @@ export const docSections: DocSection[] = [
     icon: "Rocket",
     items: [
       { id: "quickstart", label: "Quickstart" },
+      { id: "multi-app", label: "Multi-App Setup" },
     ],
   },
   {
@@ -37,7 +39,7 @@ export const docSections: DocSection[] = [
     title: "Security & Hardening",
     icon: "Shield",
     items: [
-      { id: "security-hardening", label: "Security Hardening" },
+      { id: "security-hardening", label: "Security Overview" },
     ],
   },
   {
@@ -46,6 +48,7 @@ export const docSections: DocSection[] = [
     icon: "Terminal",
     items: [
       { id: "operations", label: "Lifecycle & CLI" },
+      { id: "troubleshooting", label: "Troubleshooting" },
     ],
   },
   {
@@ -70,6 +73,7 @@ export const docSections: DocSection[] = [
     icon: "RefreshCw",
     items: [
       { id: "upgrades", label: "AMI Upgrades" },
+      { id: "roadmap", label: "Roadmap" },
     ],
   },
 ];
@@ -78,73 +82,261 @@ export const docContents: Record<string, DocContent> = {
   quickstart: {
     id: "quickstart",
     title: "Quickstart",
-    description: "Get your Northstar appliance up and running in under 5 minutes.",
+    description: "Go from AMI to a running Nginx Proxy Manager admin panel in minutes.",
     content: [
       {
         type: "prereq",
         items: [
           "AWS Account with EC2 launch permissions",
-          "VPC with public subnet (for proxy use cases)",
-          "Terraform 1.0+ or AWS CLI configured",
+          "Familiarity with launching EC2 instances and security groups",
           "SSH key pair configured in your target region",
+          "VPC with public subnet (for proxy use cases)",
         ],
       },
       {
         type: "heading",
-        content: "Step 1: Launch the EC2 Instance",
+        content: "1. Launch the EC2 Instance",
       },
       {
         type: "paragraph",
-        content: "Deploy the NPM Hardened Edition AMI using our Terraform module for the fastest deployment path:",
-      },
-      {
-        type: "code",
-        language: "bash",
-        content: `# Clone the deployment repository
-git clone https://github.com/northstar-cloud/npm-hardened-deploy.git
-cd npm-hardened-deploy
-
-# Initialize and apply
-terraform init
-terraform apply`,
-      },
-      {
-        type: "heading",
-        content: "Step 2: SSH and Retrieve Credentials",
+        content: "In the AWS Console, go to EC2 → AMIs and select the Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions. Click Launch instance.",
       },
       {
         type: "paragraph",
-        content: "Once the instance is running, SSH in to retrieve your automatically generated admin credentials:",
-      },
-      {
-        type: "code",
-        language: "bash",
-        content: `# Connect to your instance
-ssh -i your-key.pem admin@<instance-public-ip>
-
-# Retrieve admin credentials (root access required)
-sudo cat /root/npm-admin-credentials.txt`,
-      },
-      {
-        type: "note",
-        variant: "info",
-        content: "Credentials are automatically generated on first boot and stored in a root-only file at /root/npm-admin-credentials.txt. They are never transmitted externally.",
-      },
-      {
-        type: "heading",
-        content: "Step 3: Configure Your First Proxy Host",
-      },
-      {
-        type: "paragraph",
-        content: "Access the admin panel at https://<your-instance-ip>:81 using the credentials from the previous step. From there you can:",
+        content: "Choose an instance type:",
       },
       {
         type: "list",
         items: [
-          "Add your first proxy host pointing to your backend service",
-          "Configure SSL certificates via Let's Encrypt",
-          "Set up access lists for restricted endpoints",
-          "Configure custom locations and advanced settings",
+          "For testing: t3.micro / t3.small",
+          "For light production: t3.small is the recommended baseline",
+          "For higher traffic: t3.medium or larger depending on load",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Configure network and security group to allow the following ports:",
+      },
+      {
+        type: "code",
+        language: "text",
+        content: `22/tcp   - SSH
+80/tcp   - HTTP
+81/tcp   - NPM Admin UI
+443/tcp  - HTTPS`,
+      },
+      {
+        type: "heading",
+        content: "2. First SSH Login & Credentials",
+      },
+      {
+        type: "paragraph",
+        content: "Once the instance is running, SSH in as user ubuntu:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `ssh -i /path/to/key.pem ubuntu@<instance-public-ip>`,
+      },
+      {
+        type: "paragraph",
+        content: "On login, you will see a MOTD banner displaying your admin URL and credentials:",
+      },
+      {
+        type: "code",
+        language: "text",
+        content: `Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions
+
+Admin URL: http://<instance-ip>:81
+Username: admin@example.com
+Password: <generated-strong-password> (shown on first login only)`,
+      },
+      {
+        type: "note",
+        variant: "info",
+        content: "Credentials are uniquely generated on first boot and displayed in the MOTD banner. For security, they are not re-printed on future logins.",
+      },
+      {
+        type: "subheading",
+        content: "Credential Recovery",
+      },
+      {
+        type: "paragraph",
+        content: "If you missed the credentials at login, they are saved in a root-only file:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo cat /root/npm-admin-credentials.txt`,
+      },
+      {
+        type: "heading",
+        content: "3. Log into Nginx Proxy Manager",
+      },
+      {
+        type: "paragraph",
+        content: "Open your browser to the admin panel:",
+      },
+      {
+        type: "code",
+        language: "text",
+        content: `http://<instance-public-ip>:81`,
+      },
+      {
+        type: "paragraph",
+        content: "Log in with the username and password from the MOTD or credentials file. You're now in the NPM admin interface.",
+      },
+      {
+        type: "heading",
+        content: "4. Create Your First Proxy Host",
+      },
+      {
+        type: "paragraph",
+        content: "Inside NPM, go to Hosts → Proxy Hosts → Add Proxy Host and configure:",
+      },
+      {
+        type: "list",
+        items: [
+          "Domain Names: app.example.com",
+          "Scheme: http",
+          "Forward Hostname / IP: internal app address (e.g., 10.0.1.23)",
+          "Forward Port: 3000 (for example)",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Optionally enable SSL and use Let's Encrypt once DNS is pointing at the instance. Save, and once DNS is configured and propagated, https://app.example.com will route through this NPM instance.",
+      },
+      {
+        type: "heading",
+        content: "5. Basic Health Checks",
+      },
+      {
+        type: "paragraph",
+        content: "On the instance, you can sanity-check everything:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Check systemd services
+sudo systemctl status docker
+sudo systemctl status npm
+sudo systemctl status npm-init
+
+# Check Docker containers
+cd /opt/npm
+sudo docker compose ps
+
+# Check helper status
+sudo npm-helper status`,
+      },
+      {
+        type: "note",
+        variant: "success",
+        content: "If those look good, you're up and running! CloudWatch logs and metrics are optional and only ship if you attach an instance role/policy.",
+      },
+    ],
+  },
+  "multi-app": {
+    id: "multi-app",
+    title: "Hosting Multiple Apps Behind NPM",
+    description: "A common use case: run multiple applications behind a single NPM instance on EC2.",
+    content: [
+      {
+        type: "heading",
+        content: "Scenario",
+      },
+      {
+        type: "paragraph",
+        content: "You have one NPM Hardened Edition instance and two backend apps:",
+      },
+      {
+        type: "list",
+        items: [
+          "app1 on another EC2 instance at 10.0.1.10:3000",
+          "app2 on another EC2 instance at 10.0.1.11:4000",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "You want:",
+      },
+      {
+        type: "list",
+        items: [
+          "https://app1.example.com → 10.0.1.10:3000",
+          "https://app2.example.com → 10.0.1.11:4000",
+        ],
+      },
+      {
+        type: "heading",
+        content: "Steps",
+      },
+      {
+        type: "subheading",
+        content: "1. Configure DNS",
+      },
+      {
+        type: "paragraph",
+        content: "Point DNS (A records) for both domains to the NPM instance public IP or load balancer:",
+      },
+      {
+        type: "list",
+        items: [
+          "app1.example.com → NPM instance public IP",
+          "app2.example.com → NPM instance public IP",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "2. Configure Proxy Hosts in NPM",
+      },
+      {
+        type: "paragraph",
+        content: "Add Proxy Host for app1.example.com:",
+      },
+      {
+        type: "list",
+        items: [
+          "Domain Names: app1.example.com",
+          "Scheme: http",
+          "Forward Hostname / IP: 10.0.1.10",
+          "Forward Port: 3000",
+          "Enable SSL (Let's Encrypt) once DNS is working",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Add Proxy Host for app2.example.com:",
+      },
+      {
+        type: "list",
+        items: [
+          "Domain Names: app2.example.com",
+          "Scheme: http",
+          "Forward Hostname / IP: 10.0.1.11",
+          "Forward Port: 4000",
+          "Enable SSL (Let's Encrypt) once DNS is working",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "3. Optional: Use an Application Load Balancer",
+      },
+      {
+        type: "paragraph",
+        content: "Put the NPM instance behind an Application Load Balancer (ALB) that terminates TLS and forwards to the NPM instance. In that case, you can run NPM in HTTP-only mode internally and let ALB handle TLS.",
+      },
+      {
+        type: "heading",
+        content: "Tips",
+      },
+      {
+        type: "list",
+        items: [
+          "Consider using private subnets and security groups so only the NPM instance can reach your backend apps",
+          "Use separate NPM access lists if some apps should be restricted",
+          "Use backups to protect NPM configuration and TLS certificates",
         ],
       },
     ],
@@ -152,7 +344,7 @@ sudo cat /root/npm-admin-credentials.txt`,
   "security-hardening": {
     id: "security-hardening",
     title: "Security & Hardening",
-    description: "Comprehensive security controls pre-configured in every Hardened Edition appliance.",
+    description: "This AMI ships with a conservative security baseline applied out of the box.",
     content: [
       {
         type: "heading",
@@ -169,34 +361,55 @@ sudo cat /root/npm-admin-credentials.txt`,
 PasswordAuthentication no
 PermitRootLogin no
 PubkeyAuthentication yes
-MaxAuthTries 3
-ClientAliveInterval 300
-ClientAliveCountMax 2`,
+UsePAM yes
+Banner /etc/issue.net`,
+      },
+      {
+        type: "paragraph",
+        content: "Implications:",
+      },
+      {
+        type: "list",
+        items: [
+          "You must use SSH keys to access the instance",
+          "Logging in directly as root via SSH is disabled",
+          "SSH as ubuntu (or another user you configure) and use sudo",
+          "Initial admin credentials are stored in /root/npm-admin-credentials.txt (root-only, 0600)",
+        ],
       },
       {
         type: "note",
         variant: "warning",
-        content: "Root login is disabled. Use the 'admin' user with sudo privileges for all administrative tasks.",
+        content: "Rotate the password after first login and delete the credentials file if your security policy requires it.",
       },
       {
         type: "heading",
-        content: "UFW Firewall Rules",
+        content: "Firewall (UFW)",
       },
       {
         type: "paragraph",
-        content: "The Uncomplicated Firewall (UFW) is pre-configured with strict ingress rules:",
+        content: "UFW is installed and configured to deny all incoming connections by default, allow all outgoing connections, and permit only essential ports:",
       },
       {
         type: "code",
         language: "bash",
-        content: `# Default UFW configuration
-sudo ufw status verbose
+        content: `# Check current rules
+sudo ufw status numbered
 
 # Allowed ports:
-# 22/tcp  - SSH access
-# 80/tcp  - HTTP (redirects to HTTPS)
-# 81/tcp  - NPM Admin Panel
-# 443/tcp - HTTPS proxy traffic`,
+# 22/tcp  - SSH
+# 80/tcp  - HTTP
+# 81/tcp  - NPM Admin UI
+# 443/tcp - HTTPS`,
+      },
+      {
+        type: "paragraph",
+        content: "To allow additional ports:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo ufw allow <port>/tcp comment 'your-service-name'`,
       },
       {
         type: "heading",
@@ -204,15 +417,43 @@ sudo ufw status verbose
       },
       {
         type: "paragraph",
-        content: "Fail2Ban automatically bans IPs after repeated failed authentication attempts:",
+        content: "Fail2Ban is configured with an sshd jail that monitors /var/log/auth.log and automatically bans IP addresses after repeated failed SSH login attempts. It uses the systemd backend for better integration with Ubuntu 22.04.",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Check Fail2Ban status
+sudo systemctl status fail2ban
+sudo fail2ban-client status sshd
+
+# Unban a specific IP address
+sudo fail2ban-client set sshd unbanip <IP_ADDRESS>`,
+      },
+      {
+        type: "note",
+        variant: "warning",
+        content: "Ensure you still have valid SSH key access before changing bans. Prefer allowing only trusted IPs in your EC2 Security Group for port 22/tcp.",
+      },
+      {
+        type: "heading",
+        content: "Kernel Hardening (Sysctl)",
+      },
+      {
+        type: "paragraph",
+        content: "A set of IPv4 hardening options is applied via /etc/sysctl.d/99-brand-hardened.conf:",
       },
       {
         type: "list",
         items: [
-          "SSH jail: 5 failed attempts triggers 10-minute ban",
-          "NPM admin panel: 3 failed attempts triggers 30-minute ban",
-          "Ban events are logged to CloudWatch for alerting",
+          "Disable accepting/sending ICMP redirects",
+          "Disable accepting source-routed packets",
+          "Ignore ICMP echo broadcasts",
+          "Enable reverse path filtering to prevent IP spoofing",
         ],
+      },
+      {
+        type: "paragraph",
+        content: "These settings are conservative and do not break normal traffic.",
       },
       {
         type: "heading",
@@ -220,47 +461,64 @@ sudo ufw status verbose
       },
       {
         type: "paragraph",
-        content: "For security, SSH host keys are automatically regenerated on first boot via cloud-init. This ensures each instance has unique cryptographic identity:",
+        content: "For AMI integrity, SSH host keys are removed during AMI creation and machine ID is reset. On first boot of an instance:",
       },
       {
-        type: "code",
-        language: "bash",
-        content: `# Performed automatically on first boot
-rm -f /etc/ssh/ssh_host_*
-ssh-keygen -A
-systemctl restart sshd`,
+        type: "list",
+        items: [
+          "New SSH host keys are generated via cloud-init",
+          "A new machine ID is created",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "This ensures each EC2 instance launched from the AMI has unique cryptographic material and identity. If you reuse an Elastic IP or DNS name, your SSH client may show a one-time \"host key changed\" warning. Update your local known_hosts entry and reconnect.",
       },
     ],
   },
   operations: {
     id: "operations",
     title: "Operations",
-    description: "Understanding the first-boot lifecycle and day-to-day operations.",
+    description: "Understanding the first-boot lifecycle, CLI tools, and day-to-day operations.",
     content: [
       {
         type: "heading",
-        content: "First-Boot Lifecycle",
+        content: "NPM Initialization (First Boot)",
       },
       {
         type: "paragraph",
-        content: "The Hardened Edition follows a structured initialization sequence:",
+        content: "On first boot, the appliance uses a three-stage initialization sequence:",
       },
       {
         type: "list",
         items: [
-          "npm-preflight: Validates system requirements and network connectivity",
-          "npm-init: Initializes the application, generates credentials, starts services",
-          "npm-postinit: Configures monitoring agents, enables backup schedules",
+          "npm-preflight.service → System checks and clear failure reasons",
+          "npm-init.service → One-time credential initialization",
+          "npm-postinit.service → Post-init health verification",
         ],
+      },
+      {
+        type: "paragraph",
+        content: "You can see the current state in the SSH login banner (MOTD) under Initialization Status, or by running:",
       },
       {
         type: "code",
         language: "bash",
-        content: `# View initialization logs
-sudo journalctl -u npm-init.service
-
-# Check current service status
-npm-helper status`,
+        content: `sudo npm-helper status`,
+      },
+      {
+        type: "paragraph",
+        content: "The npm-init.service runs once to:",
+      },
+      {
+        type: "list",
+        items: [
+          "Wait for the NPM SQLite database to become ready (up to ~300 seconds)",
+          "Generate a secure random admin password",
+          "Update the database with the new credentials",
+          "Write credentials to a root-only file",
+          "Update the SSH login banner (MOTD)",
+        ],
       },
       {
         type: "heading",
@@ -268,7 +526,7 @@ npm-helper status`,
       },
       {
         type: "paragraph",
-        content: "The npm-helper CLI provides essential management commands:",
+        content: "The npm-helper CLI is installed under /usr/local/bin and provides essential management commands:",
       },
       {
         type: "code",
@@ -289,51 +547,374 @@ npm-helper diagnostics
 npm-helper update-os`,
       },
       {
+        type: "subheading",
+        content: "status",
+      },
+      {
+        type: "paragraph",
+        content: "Shows Docker service status, npm service status, container status from docker compose ps, and last backup timestamp found under /var/backups. This is a quick way to check if the system is healthy.",
+      },
+      {
+        type: "subheading",
+        content: "show-admin",
+      },
+      {
+        type: "paragraph",
+        content: "Outputs the current admin username. Note: the password is not displayed again after first login for security.",
+      },
+      {
+        type: "subheading",
+        content: "rotate-admin",
+      },
+      {
+        type: "paragraph",
+        content: "Generates a new strong random password, updates the NPM auth table with the new bcrypt hash, and writes new credentials to the root-only credentials file. Use this whenever you want to rotate the admin password without using the web UI.",
+      },
+      {
+        type: "subheading",
+        content: "diagnostics",
+      },
+      {
+        type: "paragraph",
+        content: "Emits non-sensitive diagnostic JSON for support/troubleshooting. Use --json flag for structured output.",
+      },
+      {
+        type: "subheading",
+        content: "update-os",
+      },
+      {
+        type: "paragraph",
+        content: "Runs a one-click apt-get update + apt-get upgrade for Ubuntu security patching. May require a reboot.",
+      },
+      {
+        type: "heading",
+        content: "Systemd Services",
+      },
+      {
+        type: "paragraph",
+        content: "Key services running on the appliance:",
+      },
+      {
+        type: "list",
+        items: [
+          "docker.service – Docker engine",
+          "npm.service – NPM Docker stack",
+          "npm-preflight.service – First-boot preflight checks",
+          "npm-init.service – One-time first-boot initialization",
+          "npm-postinit.service – First-boot post-init health summary",
+          "npm-backup.timer – Daily backup timer (runs at 02:00)",
+          "amazon-cloudwatch-agent.service – CloudWatch log shipping",
+        ],
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Check status
+sudo systemctl status npm
+sudo systemctl status docker
+sudo systemctl status amazon-cloudwatch-agent
+
+# View logs
+sudo journalctl -u npm
+sudo journalctl -u amazon-cloudwatch-agent
+
+# Restart NPM stack
+sudo systemctl restart npm`,
+      },
+      {
         type: "heading",
         content: "Data Locations",
       },
       {
         type: "paragraph",
-        content: "NPM stores its data in the following locations:",
+        content: "NPM runs in Docker and stores its state in:",
       },
       {
         type: "list",
         items: [
-          "/opt/npm/data - Application database and configuration",
-          "/opt/npm/letsencrypt - SSL certificates managed by Let's Encrypt",
+          "/opt/npm/data – Configuration and SQLite database",
+          "/opt/npm/letsencrypt – TLS certificates managed by Let's Encrypt",
         ],
       },
       {
         type: "note",
         variant: "info",
-        content: "Both directories are included in automated backups when using the npm-backup tool.",
+        content: "Both directories are mounted into the NPM container, included in backup archives, and preserved across instance reboots.",
+      },
+    ],
+  },
+  troubleshooting: {
+    id: "troubleshooting",
+    title: "Troubleshooting",
+    description: "Common issues and how to debug them.",
+    content: [
+      {
+        type: "heading",
+        content: "First Boot FAQ (Preflight / Init / Post-init)",
+      },
+      {
+        type: "paragraph",
+        content: "The first boot flow is: npm-preflight.service → npm-init.service → npm-postinit.service. Status is visible in the SSH login banner and via npm-helper status.",
+      },
+      {
+        type: "paragraph",
+        content: "Status files are located at:",
+      },
+      {
+        type: "list",
+        items: [
+          "/var/lib/northstar/npm/preflight-status",
+          "/var/lib/npm-init-complete (marker file)",
+          "/var/lib/northstar/npm/postinit-status",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Preflight Failures",
+      },
+      {
+        type: "paragraph",
+        content: "Preflight checks for common blockers: disk space, Docker active, docker compose available, image pullability, directory permissions, required tools.",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo systemctl status npm-preflight --no-pager
+sudo journalctl -u npm-preflight --no-pager -n 200
+sudo npm-helper status`,
+      },
+      {
+        type: "paragraph",
+        content: "Most common causes:",
+      },
+      {
+        type: "list",
+        items: [
+          "Insufficient disk space",
+          "Docker inactive",
+          "docker compose missing",
+          "No outbound internet access (image pull fails)",
+          "Permissions/ownership issues on /opt/npm or its subdirectories",
+          "Missing curl on the host",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Init / Post-init Failures",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo systemctl status npm-init npm-postinit npm --no-pager
+sudo journalctl -u npm-init -n 200 --no-pager
+sudo journalctl -u npm-postinit -n 200 --no-pager
+sudo npm-helper diagnostics --json`,
+      },
+      {
+        type: "paragraph",
+        content: "Safe rerun commands (after fixing the underlying issue):",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo systemctl start npm-preflight.service
+sudo systemctl start npm-init.service
+sudo systemctl start npm-postinit.service`,
+      },
+      {
+        type: "heading",
+        content: "NPM Admin UI Not Reachable on Port 81",
+      },
+      {
+        type: "paragraph",
+        content: "1. Check security group – ensure 81/tcp is allowed from your IP or CIDR.",
+      },
+      {
+        type: "paragraph",
+        content: "2. Check UFW on the instance:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo ufw status numbered`,
+      },
+      {
+        type: "paragraph",
+        content: "3. Check services:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo systemctl status docker
+sudo systemctl status npm`,
+      },
+      {
+        type: "paragraph",
+        content: "4. Check Docker containers:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `cd /opt/npm
+sudo docker compose ps
+
+# If not running, check logs:
+sudo docker compose logs`,
+      },
+      {
+        type: "heading",
+        content: "Lost Admin Password",
+      },
+      {
+        type: "paragraph",
+        content: "You can always recover or reset it from the instance:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Show current username
+sudo npm-helper show-admin
+
+# Force a rotation (generates a new password)
+sudo npm-helper rotate-admin`,
+      },
+      {
+        type: "note",
+        variant: "info",
+        content: "For security, passwords are not re-printed on login. See the Security docs for where credentials are stored and how to handle them safely.",
+      },
+      {
+        type: "heading",
+        content: "Backups Not Appearing in S3",
+      },
+      {
+        type: "list",
+        items: [
+          "Check /etc/npm-backup.conf: ensure s3_bucket is set and s3_prefix is correct",
+          "Ensure the instance has an IAM role with permissions to write to the bucket",
+          "Run sudo npm-backup and check output for warnings",
+          "Verify the S3 bucket in the AWS Console",
+        ],
+      },
+      {
+        type: "note",
+        variant: "info",
+        content: "Even if S3 upload fails, local backups are still created in local_backup_dir.",
+      },
+      {
+        type: "heading",
+        content: "CloudWatch Logs Missing",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Check the agent service
+sudo systemctl status amazon-cloudwatch-agent
+
+# Check journal
+sudo journalctl -u amazon-cloudwatch-agent`,
+      },
+      {
+        type: "paragraph",
+        content: "Ensure the instance IAM role has permissions to write CloudWatch Logs. In the AWS Console, navigate to CloudWatch → Logs → Log groups → /northstar-cloud-solutions/npm. If the agent is running but logs are missing, IAM permissions are the most common cause.",
+      },
+      {
+        type: "heading",
+        content: "Getting More Help",
+      },
+      {
+        type: "paragraph",
+        content: "Before opening a support request, run the diagnostics command and include the output:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo npm-helper diagnostics`,
       },
     ],
   },
   "backup-restore": {
     id: "backup-restore",
     title: "Backup & Restore",
-    description: "Zero-downtime backup and restore operations using SQLite hot-backup technology.",
+    description: "Protecting your Nginx Proxy Manager data and TLS certificates with built-in backup and restore tooling.",
     content: [
       {
         type: "heading",
-        content: "npm-backup Tool",
+        content: "What Gets Backed Up",
       },
       {
         type: "paragraph",
-        content: "Create atomic backups without stopping the application:",
+        content: "The npm-backup script creates timestamped archives containing:",
+      },
+      {
+        type: "list",
+        items: [
+          "/opt/npm/data – Configuration and SQLite database",
+          "/opt/npm/letsencrypt – TLS certificates",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Backups are stored locally under a configurable directory (default: /var/backups), named like npm-YYYYMMDDHHMMSS.tar.gz, and optionally uploaded to S3.",
+      },
+      {
+        type: "heading",
+        content: "Configuration: /etc/npm-backup.conf",
+      },
+      {
+        type: "paragraph",
+        content: "Backup behavior is controlled by an INI-style configuration file:",
+      },
+      {
+        type: "code",
+        language: "ini",
+        content: `[backup]
+local_backup_dir = /var/backups
+s3_bucket =
+s3_prefix = npm
+local_retention = 7`,
+      },
+      {
+        type: "list",
+        items: [
+          "local_backup_dir – Directory where backup archives are stored",
+          "s3_bucket – If set (e.g., my-npm-backups), backups are also uploaded to S3. If empty, S3 upload is disabled",
+          "s3_prefix – Optional key prefix (e.g., npm → backups stored under npm/... in S3)",
+          "local_retention – Number of most recent local backups to keep (must be 1 or greater, recommended: 7)",
+        ],
+      },
+      {
+        type: "note",
+        variant: "warning",
+        content: "Setting local_retention to 0 will cause npm-backup to fail with an error to prevent unbounded disk growth.",
+      },
+      {
+        type: "heading",
+        content: "Creating Backups",
+      },
+      {
+        type: "paragraph",
+        content: "Run a backup manually:",
       },
       {
         type: "code",
         language: "bash",
-        content: `# Create a backup
-sudo npm-backup
-
-# Backup with custom filename
-sudo npm-backup --output /tmp/npm-backup-$(date +%Y%m%d).tar.gz
-
-# View backup history
-sudo npm-backup --list`,
+        content: `sudo npm-backup`,
+      },
+      {
+        type: "paragraph",
+        content: "This will: read /etc/npm-backup.conf, create an archive under local_backup_dir, optionally upload to S3 if configured, and apply the retention policy.",
+      },
+      {
+        type: "paragraph",
+        content: "A systemd timer runs backups automatically once per day at 02:00:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Check timer status
+sudo systemctl status npm-backup.timer
+sudo systemctl status npm-backup.service`,
       },
       {
         type: "note",
@@ -342,125 +923,248 @@ sudo npm-backup --list`,
       },
       {
         type: "heading",
-        content: "npm-restore Tool",
-      },
-      {
-        type: "paragraph",
-        content: "Restore from any backup archive:",
+        content: "Checking Backup Status",
       },
       {
         type: "code",
         language: "bash",
-        content: `# Restore from latest backup
-sudo npm-restore
-
-# Restore from specific backup file
-sudo npm-restore --input /path/to/backup.tar.gz
-
-# Dry-run to validate backup integrity
-sudo npm-restore --dry-run --input /path/to/backup.tar.gz`,
+        content: `sudo npm-helper status`,
+      },
+      {
+        type: "paragraph",
+        content: "This displays: last backup file, last run timestamp, last success timestamp and filename, and last failure reason if present.",
+      },
+      {
+        type: "paragraph",
+        content: "Status is stored in sentinel files at /var/lib/northstar/npm/:",
+      },
+      {
+        type: "list",
+        items: [
+          "backup-last-run – Timestamp of last backup start",
+          "backup-last-success – Timestamp + filename on success",
+          "backup-last-failure – Timestamp + reason on failure (cleared on success)",
+        ],
       },
       {
         type: "heading",
-        content: "Configuration",
+        content: "Optional S3 Backups",
       },
       {
         type: "paragraph",
-        content: "Backup behavior is configured in /etc/npm-backup.conf:",
+        content: "S3 uploads are optional. Local backups work without IAM permissions. To enable S3 sync:",
+      },
+      {
+        type: "list",
+        items: [
+          "Attach an IAM role with s3:PutObject and s3:ListBucket permissions to the instance",
+          "Set s3_bucket in /etc/npm-backup.conf",
+          "Run sudo npm-backup to test",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Minimal IAM policy for S3 backups:",
       },
       {
         type: "code",
-        language: "bash",
-        content: `# /etc/npm-backup.conf
-BACKUP_DIR=/var/backups/npm
-RETENTION_DAYS=7
-COMPRESSION=gzip
-
-# Optional S3 sync
-S3_BUCKET=my-backup-bucket
-S3_PREFIX=npm-backups/
-AWS_REGION=us-east-1`,
+        language: "json",
+        content: `{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListBucketForPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+      "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME",
+      "Condition": {
+        "StringLike": { "s3:prefix": ["npm/*"] }
+      }
+    },
+    {
+      "Sid": "PutObjectsInPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:AbortMultipartUpload"],
+      "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/npm/*"
+    }
+  ]
+}`,
       },
       {
         type: "heading",
-        content: "S3 Synchronization",
+        content: "Restoring from Backup",
       },
       {
         type: "paragraph",
-        content: "Enable automatic S3 sync for off-site backup storage:",
+        content: "Use npm-restore to restore from a backup archive:",
       },
       {
         type: "code",
         language: "bash",
-        content: `# Configure IAM role or credentials
-aws configure
+        content: `# List available backups
+ls -1 /var/backups/npm-*.tar.gz
 
-# Enable S3 sync in config
-echo "S3_ENABLED=true" | sudo tee -a /etc/npm-backup.conf
-
-# Manual sync to S3
-sudo npm-backup --sync-s3`,
+# Restore from specific backup
+sudo npm-restore /var/backups/npm-YYYYMMDDHHMMSS.tar.gz`,
+      },
+      {
+        type: "paragraph",
+        content: "What npm-restore does:",
+      },
+      {
+        type: "list",
+        items: [
+          "Stops the npm systemd service",
+          "Moves existing /opt/npm/data and /opt/npm/letsencrypt to .bak-<timestamp> safety backups",
+          "Extracts the archive to restore original paths",
+          "Fixes ownership on restored directories",
+          "Starts the npm service",
+          "Performs a health check against the local NPM API (port 81)",
+        ],
+      },
+      {
+        type: "note",
+        variant: "warning",
+        content: "Only restore archives created by npm-backup on trusted instances. The restore script validates archive contents and will refuse to extract archives containing paths outside the expected directories.",
+      },
+      {
+        type: "heading",
+        content: "Best Practices",
+      },
+      {
+        type: "list",
+        items: [
+          "Keep local_retention at least 5–7 for a buffer of good backups",
+          "Use S3 uploads with IAM roles for off-instance copies",
+          "After major configuration changes, force a backup with sudo npm-backup",
+          "Test npm-restore in a non-production environment before you need it",
+        ],
       },
     ],
   },
   monitoring: {
     id: "monitoring",
-    title: "Monitoring",
-    description: "CloudWatch integration for comprehensive observability.",
+    title: "Monitoring & Metrics",
+    description: "CloudWatch integration for comprehensive observability – optional but pre-configured.",
     content: [
       {
         type: "heading",
-        content: "CloudWatch Agent",
+        content: "IAM Permissions (Optional)",
       },
       {
         type: "paragraph",
-        content: "The CloudWatch Agent is pre-installed and configured to ship logs and metrics to AWS CloudWatch.",
+        content: "CloudWatch integration is optional. This AMI functions normally without any AWS IAM permissions. If no instance role is attached (or permissions are missing), the CloudWatch Agent may log permission errors but will not affect application functionality.",
       },
       {
         type: "heading",
-        content: "Log Groups",
+        content: "What Gets Shipped to CloudWatch",
+      },
+      {
+        type: "subheading",
+        content: "Logs",
       },
       {
         type: "paragraph",
-        content: "Application and system logs are sent to the following CloudWatch Log Group:",
+        content: "The following logs are shipped to CloudWatch Logs group /northstar-cloud-solutions/npm:",
       },
       {
-        type: "code",
-        language: "bash",
-        content: `# Default log group
-/northstar-cloud-solutions/npm
-
-# Log streams include:
-# - npm/access.log     - Proxy access logs
-# - npm/error.log      - Application errors
-# - auth/fail2ban.log  - Security events
-# - system/syslog      - System messages`,
-      },
-      {
-        type: "heading",
-        content: "Metrics Namespace",
+        type: "list",
+        items: [
+          "/var/log/syslog",
+          "/var/log/auth.log",
+          "/var/lib/docker/containers/*/*-json.log",
+        ],
       },
       {
         type: "paragraph",
-        content: "System metrics are published to CloudWatch under:",
+        content: "Each instance uses separate log streams (e.g., {instance_id}-syslog, {instance_id}-auth).",
       },
       {
-        type: "code",
-        language: "bash",
-        content: `# Metrics namespace
-NorthstarCloudSolutions/System
-
-# Available metrics:
-# - CPUUtilization
-# - MemoryUtilization
-# - DiskUsedPercent
-# - NetworkIn/NetworkOut
-# - ContainerHealth`,
+        type: "subheading",
+        content: "Metrics",
+      },
+      {
+        type: "paragraph",
+        content: "System metrics are published under the CloudWatch namespace NorthstarCloudSolutions/System:",
+      },
+      {
+        type: "list",
+        items: [
+          "Disk: used percent on /",
+          "Memory: used percent",
+          "CPU: idle and iowait",
+          "Network: bytes in/out on the primary interface (typically eth0)",
+        ],
       },
       {
         type: "note",
         variant: "info",
-        content: "Create CloudWatch Alarms on these metrics to receive notifications for resource thresholds or anomalies.",
+        content: "This AMI does not create alarms, dashboards, or notifications by default. CloudWatch retention and costs are controlled by your account settings.",
+      },
+      {
+        type: "heading",
+        content: "Minimal IAM Policy (Logs + Metrics)",
+      },
+      {
+        type: "paragraph",
+        content: "Attach an instance role with a policy similar to the following:",
+      },
+      {
+        type: "code",
+        language: "json",
+        content: `{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CloudWatchLogsWrite",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchMetricsWrite",
+      "Effect": "Allow",
+      "Action": ["cloudwatch:PutMetricData"],
+      "Resource": "*"
+    }
+  ]
+}`,
+      },
+      {
+        type: "heading",
+        content: "CloudWatch Agent Configuration",
+      },
+      {
+        type: "paragraph",
+        content: "The CloudWatch Agent is installed and configured via:",
+      },
+      {
+        type: "list",
+        items: [
+          "Config file: /opt/aws/amazon-cloudwatch-agent/amazon-cloudwatch-agent.json",
+          "Service: amazon-cloudwatch-agent.service",
+        ],
+      },
+      {
+        type: "heading",
+        content: "Troubleshooting Permissions",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Check agent logs
+sudo journalctl -u amazon-cloudwatch-agent.service -n 200 --no-pager
+
+# If you see AccessDenied or UnauthorizedOperation:
+# 1. Attach an instance role with the permissions above
+# 2. Restart the agent:
+sudo systemctl restart amazon-cloudwatch-agent.service`,
       },
     ],
   },
@@ -498,19 +1202,123 @@ NorthstarCloudSolutions/System
         content: `# On the OLD instance: Create backup
 sudo npm-backup --output /tmp/npm-migration.tar.gz
 
-# Transfer to new instance
-scp -i key.pem /tmp/npm-migration.tar.gz admin@new-instance:/tmp/
+# Copy backup to your local machine
+scp -i key.pem ubuntu@old-instance:/tmp/npm-migration.tar.gz .
+
+# Copy backup to the NEW instance
+scp -i key.pem npm-migration.tar.gz ubuntu@new-instance:/tmp/
 
 # On the NEW instance: Restore
-sudo npm-restore --input /tmp/npm-migration.tar.gz
+sudo npm-restore /tmp/npm-migration.tar.gz
 
-# Verify services
-npm-helper status`,
+# Verify the admin panel works
+curl -s http://localhost:81/api/ | head`,
+      },
+      {
+        type: "heading",
+        content: "Post-Upgrade Verification",
+      },
+      {
+        type: "list",
+        items: [
+          "Log into the NPM admin panel and verify your proxy hosts are present",
+          "Check that SSL certificates are valid",
+          "Test routing to your backend applications",
+          "Verify CloudWatch logs are shipping (if using)",
+        ],
       },
       {
         type: "note",
-        variant: "warning",
-        content: "Always test the new instance thoroughly before switching production traffic. Keep the old instance running until you've verified the migration was successful.",
+        variant: "success",
+        content: "Once verified, update your DNS records or load balancer to point to the new instance, then terminate the old instance.",
+      },
+    ],
+  },
+  roadmap: {
+    id: "roadmap",
+    title: "Roadmap",
+    description: "Planned future enhancements for the Nginx Proxy Manager – Hardened Edition.",
+    content: [
+      {
+        type: "note",
+        variant: "info",
+        content: "These features are not required for day-one production use but are intended to make the product even more powerful over time.",
+      },
+      {
+        type: "heading",
+        content: "Planned: NPM Update Tooling",
+      },
+      {
+        type: "paragraph",
+        content: "Currently, NPM is pinned to a specific Docker image version for stability. Planned enhancements include a dedicated npm-update CLI tool that will:",
+      },
+      {
+        type: "list",
+        items: [
+          "Create a backup of NPM data before updating",
+          "Pull a new NPM image version (configurable tag)",
+          "Restart the stack and perform a health check",
+          "Allow easy rollback if the new version misbehaves",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Goal: provide a safe, repeatable upgrade path without requiring manual Docker commands.",
+      },
+      {
+        type: "heading",
+        content: "Planned: Optional Customization via Config",
+      },
+      {
+        type: "paragraph",
+        content: "Introduce a configuration file (/etc/npm-ami.conf) that lets advanced users customize defaults without editing code:",
+      },
+      {
+        type: "list",
+        items: [
+          "Default admin email (instead of the built-in admin@example.com)",
+          "Branding information for MOTD banner and SSH banner",
+          "Optional tuning of backup behavior beyond /etc/npm-backup.conf",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Goal: make the AMI more flexible for MSPs and teams with specific policies, while keeping the default experience simple.",
+      },
+      {
+        type: "heading",
+        content: "Planned: Additional Logging Options",
+      },
+      {
+        type: "list",
+        items: [
+          "Optional collection of NPM application logs into CloudWatch Logs",
+          "Example dashboards/queries to monitor NPM activity",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "These will be designed to avoid adding overhead for users who don't need them.",
+      },
+      {
+        type: "heading",
+        content: "Planned: Deployment Patterns & HA Guides",
+      },
+      {
+        type: "paragraph",
+        content: "Non-code roadmap items including documentation for:",
+      },
+      {
+        type: "list",
+        items: [
+          "Running NPM behind an AWS Application Load Balancer",
+          "Using Route 53 health checks and multiple NPM instances for higher availability",
+          "Example CloudFormation / Terraform snippets to deploy the AMI in a standardized way",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "Goal: give teams clearer guidance on how to scale from a single NPM instance to more resilient setups.",
       },
     ],
   },
