@@ -1171,66 +1171,343 @@ sudo systemctl restart amazon-cloudwatch-agent.service`,
   upgrades: {
     id: "upgrades",
     title: "Upgrades",
-    description: "Safely upgrade to new AMI versions while preserving your configuration.",
+    description: "How to think about upgrades for the Nginx Proxy Manager – Hardened Edition. The design philosophy is stability first.",
     content: [
       {
+        type: "note",
+        variant: "info",
+        content: "The base OS is a hardened Ubuntu 22.04 image. Nginx Proxy Manager is pinned to a specific, tested Docker image tag. You choose when to upgrade instead of things changing underneath you.",
+      },
+      {
         type: "heading",
-        content: "Upgrade Workflow",
+        content: "1. OS & Package Updates",
       },
       {
         type: "paragraph",
-        content: "The recommended upgrade path involves launching a new instance with the latest AMI and migrating data:",
-      },
-      {
-        type: "list",
-        items: [
-          "Create a backup of your current instance using npm-backup",
-          "Launch a new EC2 instance with the latest Hardened Edition AMI",
-          "Transfer the backup file to the new instance",
-          "Restore using npm-restore",
-          "Verify functionality and update DNS/load balancer",
-          "Terminate the old instance",
-        ],
-      },
-      {
-        type: "heading",
-        content: "Step-by-Step",
+        content: "The underlying OS is Ubuntu 22.04. Security updates are handled by unattended-upgrades, but you can still run manual updates when needed:",
       },
       {
         type: "code",
         language: "bash",
-        content: `# On the OLD instance: Create backup
-sudo npm-backup --output /tmp/npm-migration.tar.gz
-
-# Copy backup to your local machine
-scp -i key.pem ubuntu@old-instance:/tmp/npm-migration.tar.gz .
-
-# Copy backup to the NEW instance
-scp -i key.pem npm-migration.tar.gz ubuntu@new-instance:/tmp/
-
-# On the NEW instance: Restore
-sudo npm-restore /tmp/npm-migration.tar.gz
-
-# Verify the admin panel works
-curl -s http://localhost:81/api/ | head`,
+        content: `sudo apt-get update
+sudo apt-get upgrade`,
       },
       {
         type: "heading",
-        content: "Post-Upgrade Verification",
+        content: "2. Upgrading to a Newer AMI Version",
+      },
+      {
+        type: "paragraph",
+        content: "When Northstar Cloud Solutions releases a new version of the AMI (e.g., with updated NPM Docker image, security patches, or new features), you can upgrade by launching a new instance from the newer AMI and migrating your data.",
+      },
+      {
+        type: "subheading",
+        content: "Recommended Upgrade Workflow",
+      },
+      {
+        type: "paragraph",
+        content: "1. Backup your current instance:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo npm-backup`,
+      },
+      {
+        type: "paragraph",
+        content: "If you have S3 configured, the backup will be uploaded automatically. Otherwise, copy the backup file from /var/backups/ to a safe location.",
+      },
+      {
+        type: "paragraph",
+        content: "2. Launch a new instance from the newer AMI:",
       },
       {
         type: "list",
         items: [
-          "Log into the NPM admin panel and verify your proxy hosts are present",
-          "Check that SSL certificates are valid",
-          "Test routing to your backend applications",
-          "Verify CloudWatch logs are shipping (if using)",
+          "In AWS Console, select the latest AMI version",
+          "Use the same instance type (or upgrade if needed)",
+          "Configure security groups and networking as before",
         ],
       },
       {
+        type: "paragraph",
+        content: "3. Test the new instance:",
+      },
+      {
+        type: "list",
+        items: [
+          "Verify the new instance boots correctly",
+          "Check that NPM admin UI is accessible",
+          "Confirm CloudWatch logs and metrics are working",
+          "Test basic functionality before migrating data",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "4. Restore your data to the new instance:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `# Copy backup file to new instance (via S3, scp, or other method)
+sudo npm-restore /path/to/npm-YYYYMMDDHHMMSS.tar.gz`,
+      },
+      {
+        type: "paragraph",
+        content: "5. Verify everything works:",
+      },
+      {
+        type: "list",
+        items: [
+          "Log into NPM admin UI",
+          "Check that all proxy hosts are present",
+          "Verify SSL certificates are intact",
+          "Test a few proxy hosts to ensure routing works",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "6. Switch traffic (if applicable):",
+      },
+      {
+        type: "list",
+        items: [
+          "Update DNS records to point to the new instance",
+          "Update load balancer targets",
+          "Monitor for any issues",
+        ],
+      },
+      {
+        type: "paragraph",
+        content: "7. Keep old instance running temporarily:",
+      },
+      {
+        type: "list",
+        items: [
+          "Don't terminate the old instance immediately",
+          "Keep it running for a few days as a rollback option",
+          "Once confident, terminate the old instance",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Rollback Considerations",
+      },
+      {
+        type: "paragraph",
+        content: "If something goes wrong with the new instance:",
+      },
+      {
+        type: "list",
+        items: [
+          "The old instance is still running with your original data",
+          "Simply point DNS/load balancer back to the old instance",
+          "Investigate issues on the new instance without pressure",
+          "Fix issues and try the upgrade again when ready",
+        ],
+      },
+      {
+        type: "heading",
+        content: "3. Updating NPM Docker Image (In-Place Patch)",
+      },
+      {
+        type: "paragraph",
+        content: "The AMI pins NPM to a specific, tested Docker image tag for stability. The recommended approach is to upgrade by launching a newer AMI version and restoring from backup. If you choose to update NPM in-place, you are choosing to deviate from the pinned version promise and assume the operational risk.",
+      },
+      {
         type: "note",
-        variant: "success",
-        content: "Once verified, update your DNS records or load balancer to point to the new instance, then terminate the old instance.",
+        variant: "warning",
+        content: "In-place NPM image updates are optional and not automatic. Test in a non-production environment first.",
+      },
+      {
+        type: "subheading",
+        content: "When to Consider Manual Updates",
+      },
+      {
+        type: "list",
+        items: [
+          "You need a feature available in a newer NPM version",
+          "A security vulnerability is patched in a newer version",
+          "You're comfortable troubleshooting Docker and NPM issues",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Conservative In-Place Steps (Patch Updates)",
+      },
+      {
+        type: "paragraph",
+        content: "1. Backup first:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo npm-backup`,
+      },
+      {
+        type: "paragraph",
+        content: "2. Edit the Docker Compose file to a newer patch tag:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo nano /opt/npm/docker-compose.yml`,
+      },
+      {
+        type: "paragraph",
+        content: "Change the image tag, for example:",
+      },
+      {
+        type: "code",
+        language: "yaml",
+        content: `# From:
+image: "jc21/nginx-proxy-manager:2.13.5"
+
+# To:
+image: "jc21/nginx-proxy-manager:2.13.6"`,
+      },
+      {
+        type: "paragraph",
+        content: "3. Pull the new image:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `cd /opt/npm
+sudo docker compose pull`,
+      },
+      {
+        type: "paragraph",
+        content: "4. Restart the stack:",
+      },
+      {
+        type: "code",
+        language: "bash",
+        content: `sudo systemctl restart npm`,
+      },
+      {
+        type: "paragraph",
+        content: "5. Verify everything works:",
+      },
+      {
+        type: "list",
+        items: [
+          "Check NPM admin UI is accessible",
+          "Verify all proxy hosts are still configured",
+          "Test a few proxy hosts",
+          "Monitor for a few hours",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Rollback (Revert the Pinned Tag)",
+      },
+      {
+        type: "paragraph",
+        content: "If something breaks after an in-place update:",
+      },
+      {
+        type: "list",
+        items: [
+          "Revert the image: tag in /opt/npm/docker-compose.yml back to the previously pinned value",
+          "Restart the stack with: sudo systemctl restart npm",
+          "If needed, restore from a known-good backup using npm-restore",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Staying on the Pinned Version",
+      },
+      {
+        type: "paragraph",
+        content: "The AMI's pinned version is tested and known to work. For production stability, consider:",
+      },
+      {
+        type: "list",
+        items: [
+          "Waiting for the next AMI release that includes the newer NPM version",
+          "Testing newer versions in a separate test instance first",
+          "Contacting support if you need a specific NPM version",
+        ],
+      },
+      {
+        type: "heading",
+        content: "4. Best Practices",
+      },
+      {
+        type: "subheading",
+        content: "Always Backup Before Upgrades",
+      },
+      {
+        type: "paragraph",
+        content: "Whether upgrading the AMI or manually updating NPM:",
+      },
+      {
+        type: "list",
+        items: [
+          "Create a backup using npm-backup",
+          "Verify the backup file exists and is not corrupted",
+          "Store backups in S3 or another safe location",
+          "Keep multiple backup generations",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Test in Non-Production First",
+      },
+      {
+        type: "list",
+        items: [
+          "Launch a test instance from the new AMI",
+          "Restore a copy of your production backup to the test instance",
+          "Verify all functionality works",
+          "Only upgrade production after successful testing",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Monitor After Upgrades",
+      },
+      {
+        type: "list",
+        items: [
+          "Check CloudWatch logs for errors",
+          "Monitor CloudWatch metrics for unusual patterns",
+          "Test all critical proxy hosts",
+          "Verify SSL certificates are still valid",
+          "Check that backups continue to work",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "When to Contact Support",
+      },
+      {
+        type: "paragraph",
+        content: "Contact Northstar Cloud Solutions support if:",
+      },
+      {
+        type: "list",
+        items: [
+          "The upgrade process fails unexpectedly",
+          "Data is lost during migration",
+          "NPM becomes inaccessible after upgrade",
+          "You encounter errors not covered in this documentation",
+          "You need guidance on a specific upgrade scenario",
+        ],
+      },
+      {
+        type: "subheading",
+        content: "Upgrade Timing",
+      },
+      {
+        type: "list",
+        items: [
+          "Plan upgrades during maintenance windows",
+          "Avoid upgrading during peak traffic periods",
+          "Have a rollback plan ready",
+          "Communicate with your team about the upgrade schedule",
+        ],
       },
     ],
   },
