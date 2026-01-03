@@ -68,7 +68,10 @@ const Terms = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">7. Contact Information</h2>
             <p className="text-muted-foreground leading-relaxed">
-              For questions about these Terms, please contact us at: legal@northstarcloudsolutions.com
+              For questions about these Terms, please contact us at:{" "}
+              <a href="mailto:legal@northstarcloud.io" className="text-accent hover:underline">
+                legal@northstarcloud.io
+              </a>
             </p>
           </section>
         </div>

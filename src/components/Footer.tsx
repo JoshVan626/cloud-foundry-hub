@@ -39,10 +39,27 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Connect */}
+          {/* Contact */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Connect</h4>
-            <div className="flex gap-4">
+            <h4 className="font-semibold text-foreground mb-4">Contact</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <a href="mailto:support@northstarcloud.io" className="hover:text-foreground transition-colors">
+                  support@northstarcloud.io
+                </a>
+              </li>
+              <li>
+                <a href="mailto:legal@northstarcloud.io" className="hover:text-foreground transition-colors">
+                  legal@northstarcloud.io
+                </a>
+              </li>
+              <li>
+                <a href="https://northstarcloud.io" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                  northstarcloud.io
+                </a>
+              </li>
+            </ul>
+            <div className="flex gap-4 mt-4">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Github className="w-5 h-5" />
               </a>

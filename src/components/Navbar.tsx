@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { Menu, X, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { MarketplaceNotifyModal } from "./MarketplaceNotifyModal";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -45,9 +46,11 @@ export const Navbar = () => {
 
         {/* CTA Button */}
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="accent" size="sm">
-            Get Started
-          </Button>
+          <MarketplaceNotifyModal>
+            <Button variant="accent" size="sm">
+              Get Started
+            </Button>
+          </MarketplaceNotifyModal>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -73,9 +76,11 @@ export const Navbar = () => {
                 {link.label}
               </Link>
             ))}
-            <Button variant="accent" size="sm" className="w-full">
-              Get Started
-            </Button>
+            <MarketplaceNotifyModal>
+              <Button variant="accent" size="sm" className="w-full">
+                Get Started
+              </Button>
+            </MarketplaceNotifyModal>
           </div>
         </div>
       )}
