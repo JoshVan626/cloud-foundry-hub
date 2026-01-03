@@ -1,6 +1,6 @@
 import { TerminalSimulator } from "./TerminalSimulator";
 import { Button } from "./ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Cog, Cloud } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const motdLines = [
@@ -22,9 +22,27 @@ const motdLines = [
   "╚══════════════════════════════════════════════════════════════╝",
 ];
 
+const keyBenefits = [
+  {
+    icon: Shield,
+    title: "Hardened by Default",
+    description: "Kernel-level tuning and pre-configured firewalls for maximum security out-of-the-box.",
+  },
+  {
+    icon: Cog,
+    title: "Automated Day-2 Ops",
+    description: "Built-in scripts for atomic backups, health monitoring, and rollback-safe updates.",
+  },
+  {
+    icon: Cloud,
+    title: "AWS Native",
+    description: "Seamless integration with CloudWatch Logs and S3 for enterprise-grade observability and durability.",
+  },
+];
+
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center py-20 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center py-20 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px]" />
@@ -39,15 +57,17 @@ export const Hero = () => {
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-              <span className="text-foreground">Infrastructure on</span>
+              <span className="text-foreground">Hardened, Auto-Updating</span>
               <br />
-              <span className="text-gradient">Autopilot</span>
+              <span className="text-foreground">Cloud Appliances.</span>
+              <br />
+              <span className="text-gradient">Zero-Touch Operations.</span>
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
-              We bridge the gap between open-source and enterprise-ready. 
-              Production-hardened AWS appliances with automated Day-2 operations, 
-              security hardening, and full observability—deployed in minutes.
+              Enterprise-grade Open Source tools, delivered as production-ready AWS AMIs 
+              with built-in security, backups, and self-healing logic. Stop managing servers 
+              and start deploying.
             </p>
             
             <div className="flex flex-wrap gap-4">
@@ -63,22 +83,6 @@ export const Hero = () => {
                 </Link>
               </Button>
             </div>
-            
-            {/* Stats */}
-            <div className="flex gap-8 pt-4">
-              <div>
-                <div className="text-2xl font-bold text-foreground">99.9%</div>
-                <div className="text-sm text-muted-foreground">Uptime SLA</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">&lt;5min</div>
-                <div className="text-sm text-muted-foreground">Deploy Time</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">24/7</div>
-                <div className="text-sm text-muted-foreground">Automated Ops</div>
-              </div>
-            </div>
           </div>
           
           {/* Right Column - Terminal */}
@@ -90,6 +94,22 @@ export const Hero = () => {
               className="relative shadow-2xl"
             />
           </div>
+        </div>
+
+        {/* Key Benefits Section */}
+        <div className="mt-24 grid md:grid-cols-3 gap-8">
+          {keyBenefits.map((benefit) => (
+            <div 
+              key={benefit.title}
+              className="p-6 rounded-xl bg-card/50 border border-border hover:border-accent/30 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center mb-4">
+                <benefit.icon className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{benefit.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{benefit.description}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

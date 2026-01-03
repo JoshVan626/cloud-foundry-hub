@@ -10,7 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bell, CheckCircle2 } from "lucide-react";
+import { Bell, CheckCircle2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface MarketplaceNotifyModalProps {
   children: React.ReactNode;
@@ -19,11 +21,40 @@ interface MarketplaceNotifyModalProps {
 export const MarketplaceNotifyModal = ({ children }: MarketplaceNotifyModalProps) => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate submission
+    
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    const { error } = await supabase
+      .from("marketplace_leads")
+      .insert({ email: trimmedEmail });
+    
+    setIsLoading(false);
+
+    if (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitted(true);
     setTimeout(() => {
       setIsOpen(false);
@@ -67,6 +98,7 @@ export const MarketplaceNotifyModal = ({ children }: MarketplaceNotifyModalProps
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isLoading}
                   className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-accent"
                 />
               </div>
@@ -74,8 +106,16 @@ export const MarketplaceNotifyModal = ({ children }: MarketplaceNotifyModalProps
                 type="submit"
                 className="w-full"
                 variant="accent"
+                disabled={isLoading}
               >
-                Notify Me
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Notify Me"
+                )}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 We'll only email you about the Marketplace launch. No spam, ever.
