@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { MarketplaceNotifyModal } from "./MarketplaceNotifyModal";
+import logo from "@/assets/logo.png";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -19,10 +20,8 @@ export const Navbar = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-accent-foreground" />
-          </div>
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="Northstar Cloud Solutions" className="h-9 w-9" />
           <span className="font-bold text-lg text-foreground">Northstar Cloud Solutions</span>
         </Link>
 
