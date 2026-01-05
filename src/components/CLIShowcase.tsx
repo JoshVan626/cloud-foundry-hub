@@ -36,15 +36,16 @@ export const CLIShowcase = ({ commands, className }: CLIShowcaseProps) => {
             key={index}
             className="flex items-center justify-between p-4 group hover:bg-terminal-header/50 transition-colors"
           >
-            <div className="flex-1 min-w-0">
-              <code className="text-sm font-mono text-terminal-green block truncate">
+            <div className="flex-1 min-w-0 pr-2">
+              <code className="text-xs sm:text-sm font-mono text-terminal-green block break-all sm:break-words">
                 $ {cmd.command}
               </code>
-              <p className="text-sm text-terminal-muted mt-1">{cmd.description}</p>
+              <p className="text-xs sm:text-sm text-terminal-muted mt-1 break-words">{cmd.description}</p>
             </div>
             <button
               onClick={() => handleCopy(cmd.command, index)}
-              className="ml-4 p-2 text-terminal-muted hover:text-terminal-text transition-colors opacity-0 group-hover:opacity-100"
+              className="ml-2 sm:ml-4 p-2 text-terminal-muted hover:text-terminal-text transition-colors opacity-0 group-hover:opacity-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label={`Copy command: ${cmd.command}`}
             >
               {copiedIndex === index ? (
                 <Check className="w-4 h-4 text-green-400" />

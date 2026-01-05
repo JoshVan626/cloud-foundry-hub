@@ -27,7 +27,6 @@ const Privacy = () => {
               We may collect the following types of information:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
-              <li><strong>Contact Information:</strong> Email addresses submitted through our notification forms.</li>
               <li><strong>Usage Data:</strong> Information about how you interact with our website, including pages visited and time spent.</li>
               <li><strong>Technical Data:</strong> IP address, browser type, and device information for analytics and security purposes.</li>
             </ul>
@@ -39,7 +38,6 @@ const Privacy = () => {
               We use the information we collect to:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
-              <li>Notify you about AWS Marketplace availability and product updates.</li>
               <li>Respond to your inquiries and provide customer support.</li>
               <li>Improve our products, services, and website experience.</li>
               <li>Comply with legal obligations and protect our rights.</li>

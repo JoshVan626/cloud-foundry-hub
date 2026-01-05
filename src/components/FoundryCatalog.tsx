@@ -12,17 +12,17 @@ export const FoundryCatalog = () => {
             <Server className="w-4 h-4 text-accent" />
             <span className="text-sm font-medium text-accent">The Foundry</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 px-4">
             Production-Ready Appliances
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
             Infrastructure components forged for production. Each appliance includes 
             automated operations, security hardening, and comprehensive observability.
           </p>
         </div>
 
         {/* Product Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
             <ProductCard
               key={product.id}

@@ -28,7 +28,7 @@ export const CodeSwitcher = ({ terraform, cloudformation, className }: CodeSwitc
           <button
             onClick={() => setActiveTab("terraform")}
             className={cn(
-              "px-4 py-2.5 text-sm font-mono transition-colors",
+              "px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-mono transition-colors min-h-[44px]",
               activeTab === "terraform"
                 ? "bg-terminal text-accent border-b-2 border-accent"
                 : "text-terminal-muted hover:text-terminal-text"
@@ -39,7 +39,7 @@ export const CodeSwitcher = ({ terraform, cloudformation, className }: CodeSwitc
           <button
             onClick={() => setActiveTab("cloudformation")}
             className={cn(
-              "px-4 py-2.5 text-sm font-mono transition-colors",
+              "px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-mono transition-colors min-h-[44px]",
               activeTab === "cloudformation"
                 ? "bg-terminal text-accent border-b-2 border-accent"
                 : "text-terminal-muted hover:text-terminal-text"
@@ -50,16 +50,17 @@ export const CodeSwitcher = ({ terraform, cloudformation, className }: CodeSwitc
         </div>
         <button
           onClick={handleCopy}
-          className="px-4 py-2 text-terminal-muted hover:text-terminal-text transition-colors"
+          className="px-3 sm:px-4 py-2 text-terminal-muted hover:text-terminal-text transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+          aria-label="Copy code to clipboard"
         >
           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Code Content */}
-      <div className="bg-terminal p-4 overflow-x-auto">
-        <pre className="font-mono text-sm text-terminal-text leading-relaxed">
-          <code>{code}</code>
+      <div className="bg-terminal p-3 sm:p-4 overflow-x-auto">
+        <pre className="font-mono text-xs sm:text-sm text-terminal-text leading-relaxed whitespace-pre">
+          <code className="block">{code}</code>
         </pre>
       </div>
     </div>

@@ -57,7 +57,7 @@ export const ProductCard = ({
 
       {/* Content */}
       <h3 className={cn(
-        "text-lg font-semibold mb-1 transition-colors",
+        "text-base sm:text-lg font-semibold mb-1 transition-colors break-words",
         comingSoon 
           ? "text-muted-foreground" 
           : "text-foreground group-hover:text-accent"
@@ -65,12 +65,12 @@ export const ProductCard = ({
         {name}
       </h3>
       <p className={cn(
-        "text-sm font-medium mb-3",
+        "text-xs sm:text-sm font-medium mb-3 break-words",
         comingSoon ? "text-zinc-500" : "text-accent"
       )}>
         {tagline}
       </p>
-      <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">
+      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2 break-words">
         {description}
       </p>
 

@@ -6,7 +6,6 @@ import { CapabilityTag } from "@/components/CapabilityTag";
 import { CodeSwitcher } from "@/components/CodeSwitcher";
 import { CLIShowcase } from "@/components/CLIShowcase";
 import { TerminalSimulator } from "@/components/TerminalSimulator";
-import { MarketplaceNotifyModal } from "@/components/MarketplaceNotifyModal";
 import { 
   ArrowLeft, 
   Zap, 
@@ -16,10 +15,8 @@ import {
   Lock, 
   Eye,
   Server,
-  CheckCircle2,
-  ExternalLink
+  CheckCircle2
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Zap,
@@ -74,34 +71,18 @@ const ProductDetail = () => {
               <CapabilityTag key={cap} label={cap} />
             ))}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 break-words">
             {product.name}
           </h1>
-          <p className="text-xl text-accent font-medium mb-4">{product.tagline}</p>
-          <p className="text-lg text-muted-foreground max-w-3xl mb-8">
+          <p className="text-lg sm:text-xl text-accent font-medium mb-4 break-words">{product.tagline}</p>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mb-8 leading-relaxed">
             {product.description}
           </p>
-          
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-4">
-            <MarketplaceNotifyModal>
-              <Button variant="accent" size="lg">
-                Get Started
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </Button>
-            </MarketplaceNotifyModal>
-            <MarketplaceNotifyModal>
-              <Button variant="outline" size="lg">
-                View on AWS Marketplace
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </Button>
-            </MarketplaceNotifyModal>
-          </div>
         </section>
 
         {/* Problem / Solution */}
-        <section className="container mx-auto px-4 mb-16">
-          <div className="grid md:grid-cols-2 gap-8">
+        <section className="container mx-auto px-4 mb-12 sm:mb-16">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <div className="p-6 rounded-lg bg-destructive/5 border border-destructive/20">
               <h3 className="text-lg font-semibold text-destructive mb-4">The Problem</h3>
               <ul className="space-y-3 text-muted-foreground">
@@ -151,7 +132,7 @@ const ProductDetail = () => {
         {product.features.length > 0 && (
           <section className="container mx-auto px-4 mb-16">
             <h2 className="text-2xl font-bold text-foreground mb-8">Day-2 Operations</h2>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {product.features.map((feature, index) => {
                 const IconComponent = iconMap[feature.icon] || Server;
                 return (
@@ -171,7 +152,7 @@ const ProductDetail = () => {
         {/* Security & Observability */}
         <section className="bg-muted/30 py-16 mb-16">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
               {/* Security */}
               {product.security.length > 0 && (
                 <div>

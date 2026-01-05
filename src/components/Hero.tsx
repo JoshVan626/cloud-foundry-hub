@@ -44,10 +44,10 @@ export const Hero = () => {
   return (
     <section className="relative min-h-screen flex flex-col justify-center py-20 overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px]" />
+      <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
       
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Content */}
           <div className="space-y-8">
@@ -56,7 +56,7 @@ export const Hero = () => {
               <span className="text-sm font-medium text-accent">Cloud Solutions Foundry</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
               <span className="text-foreground">Enterprise-Grade Hardening</span>
               <br />
               <span className="text-foreground">for Open Source</span>
@@ -64,19 +64,19 @@ export const Hero = () => {
               <span className="text-gradient">Infrastructure.</span>
             </h1>
             
-            <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed">
               Northstar Cloud Solutions delivers production-ready AWS appliances. 
               We handle the security, backups, and Day-2 operations so you can focus on scaling.
             </p>
             
-            <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" variant="accent">
+            <div className="flex flex-wrap gap-3 sm:gap-4 relative z-10">
+              <Button asChild size="lg" variant="accent" className="min-h-[44px]">
                 <Link to="/products/nginx-proxy-manager">
                   Explore The Foundry
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="outline" className="min-h-[44px]">
                 <Link to="/docs">
                   Read the Docs
                 </Link>
@@ -85,8 +85,8 @@ export const Hero = () => {
           </div>
           
           {/* Right Column - Terminal */}
-          <div className="relative">
-            <div className="absolute -inset-4 bg-accent/5 rounded-xl blur-xl" />
+          <div className="relative mt-8 lg:mt-0">
+            <div className="absolute -inset-4 bg-accent/5 rounded-xl blur-xl pointer-events-none" />
             <TerminalSimulator 
               lines={motdLines} 
               typingSpeed={15}
@@ -96,7 +96,7 @@ export const Hero = () => {
         </div>
 
         {/* Key Benefits Section */}
-        <div className="mt-24 grid md:grid-cols-3 gap-8">
+        <div className="mt-16 sm:mt-20 lg:mt-24 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {keyBenefits.map((benefit) => (
             <div 
               key={benefit.title}

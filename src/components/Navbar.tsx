@@ -2,8 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Menu, X, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { Button } from "./ui/button";
-import { MarketplaceNotifyModal } from "./MarketplaceNotifyModal";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -20,10 +18,10 @@ export const Navbar = () => {
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-4 h-4 text-accent-foreground" />
           </div>
-          <span className="font-bold text-lg text-foreground">Northstar Cloud Solutions</span>
+          <span className="font-bold text-base sm:text-lg text-foreground truncate">Northstar Cloud Solutions</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -42,15 +40,6 @@ export const Navbar = () => {
               {link.label}
             </Link>
           ))}
-        </div>
-
-        {/* CTA Button */}
-        <div className="hidden md:flex items-center gap-4">
-          <MarketplaceNotifyModal>
-            <Button variant="accent" size="sm">
-              Get Started
-            </Button>
-          </MarketplaceNotifyModal>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -76,11 +65,6 @@ export const Navbar = () => {
                 {link.label}
               </Link>
             ))}
-            <MarketplaceNotifyModal>
-              <Button variant="accent" size="sm" className="w-full">
-                Get Started
-              </Button>
-            </MarketplaceNotifyModal>
           </div>
         </div>
       )}

@@ -60,13 +60,13 @@ export const TerminalSimulator = ({
       </div>
       
       {/* Terminal Content */}
-      <div className="p-4 min-h-[300px] overflow-x-auto">
-        <div className="text-terminal-green mb-2">
+      <div className="p-3 sm:p-4 min-h-[200px] sm:min-h-[300px] overflow-x-auto">
+        <div className="text-terminal-green mb-2 text-xs sm:text-sm">
           <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
         </div>
-        <div className="text-terminal-text whitespace-pre leading-relaxed">
+        <div className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm">
           {displayedLines.map((line, i) => (
-            <div key={i} className="terminal-line">
+            <div key={i} className="terminal-line break-all sm:break-normal">
               {line}
             </div>
           ))}

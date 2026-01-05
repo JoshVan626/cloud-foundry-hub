@@ -124,12 +124,51 @@ const Documentation = () => {
 
   const breadcrumb = getBreadcrumb();
 
+  const renderMarkdown = (text: string, keyPrefix = '') => {
+    // Simple markdown rendering for bold and inline code
+    const parts: (string | JSX.Element)[] = [];
+    let lastIndex = 0;
+    let keyCounter = 0;
+    
+    // Match **bold** and `code`
+    const regex = /(\*\*([^*]+)\*\*|`([^`]+)`)/g;
+    let match;
+    
+    while ((match = regex.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        const beforeText = text.substring(lastIndex, match.index);
+        if (beforeText) {
+          parts.push(beforeText);
+        }
+      }
+      
+      // Add the matched content
+      if (match[1].startsWith('**')) {
+        // Bold text
+        parts.push(<strong key={`${keyPrefix}-${keyCounter++}`}>{match[2]}</strong>);
+      } else if (match[1].startsWith('`')) {
+        // Inline code
+        parts.push(<code key={`${keyPrefix}-${keyCounter++}`} className="bg-zinc-800 px-1.5 py-0.5 rounded text-sm font-mono">{match[3]}</code>);
+      }
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? <>{parts}</> : text;
+  };
+
   const renderBlock = (block: DocBlock, index: number) => {
     switch (block.type) {
       case "paragraph":
         return (
           <p key={index} className="text-muted-foreground mb-4 leading-relaxed">
-            {block.content}
+            {renderMarkdown(block.content || '')}
           </p>
         );
       case "heading":
@@ -145,28 +184,69 @@ const Documentation = () => {
           </h3>
         );
       case "code":
+        const language = block.language || 'bash';
+        const getLanguageLabel = (lang: string) => {
+          const labels: Record<string, string> = {
+            bash: 'bash',
+            sh: 'bash',
+            shell: 'bash',
+            json: 'json',
+            yaml: 'yaml',
+            yml: 'yaml',
+            ini: 'config',
+            conf: 'config',
+            text: 'text',
+            python: 'python',
+            py: 'python',
+            javascript: 'js',
+            js: 'js',
+            typescript: 'ts',
+            ts: 'ts',
+          };
+          return labels[lang.toLowerCase()] || lang || 'code';
+        };
+
         return (
-          <div key={index} className="relative bg-zinc-950 rounded-lg border border-zinc-800 p-4 mb-6 font-mono text-sm overflow-x-auto">
-            <button
-              onClick={() => copyToClipboard(block.content || "")}
-              className="absolute top-3 right-3 p-1.5 rounded bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
-            >
-              {copiedCode === block.content ? (
-                <Check className="w-4 h-4 text-emerald-400" />
-              ) : (
-                <Copy className="w-4 h-4 text-zinc-500" />
-              )}
-            </button>
-            <pre className="text-zinc-300 whitespace-pre-wrap pr-10">
-              {block.content?.split('\n').map((line, i) => (
-                <div key={i} className={cn(
-                  line.startsWith('#') && !line.startsWith('##') ? "text-zinc-500" : "text-zinc-300",
-                  line.startsWith('//') ? "text-zinc-500" : ""
-                )}>
-                  {line}
+          <div key={index} className="relative bg-terminal rounded-lg border border-terminal-border overflow-hidden mb-6 font-mono text-xs sm:text-sm shadow-lg">
+            {/* Terminal Header */}
+            <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 bg-terminal-header border-b border-terminal-border">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
                 </div>
-              ))}
-            </pre>
+                <span className="text-terminal-muted text-xs ml-2">{getLanguageLabel(language)}</span>
+              </div>
+              <button
+                onClick={() => copyToClipboard(block.content || "")}
+                className="p-1.5 sm:p-2 rounded bg-terminal/50 hover:bg-terminal-border transition-colors text-terminal-muted hover:text-terminal-text min-w-[44px] min-h-[44px] flex items-center justify-center"
+                title="Copy to clipboard"
+                aria-label="Copy code to clipboard"
+              >
+                {copiedCode === block.content ? (
+                  <Check className="w-4 h-4 text-terminal-green" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+            
+            {/* Code Content */}
+            <div className="p-3 sm:p-4 overflow-x-auto">
+              <pre className="text-terminal-text whitespace-pre text-xs sm:text-sm">
+                {block.content?.split('\n').map((line, i) => (
+                  <div key={i} className={cn(
+                    "terminal-line",
+                    line.startsWith('#') && !line.startsWith('##') ? "text-terminal-muted" : "",
+                    line.startsWith('//') ? "text-terminal-muted" : "",
+                    line.trim().startsWith('$') ? "text-terminal-green" : ""
+                  )}>
+                    {line}
+                  </div>
+                ))}
+              </pre>
+            </div>
           </div>
         );
       case "list":
@@ -175,7 +255,7 @@ const Documentation = () => {
             {block.items?.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-                <span className="leading-relaxed">{item}</span>
+                <span className="leading-relaxed whitespace-pre-line">{renderMarkdown(item, `list-${index}-item-${i}`)}</span>
               </li>
             ))}
           </ul>
@@ -316,10 +396,10 @@ const Documentation = () => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-72 p-6 lg:p-10">
+        <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-10">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8 flex-wrap">
+            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 flex-wrap">
               <BookOpen className="w-4 h-4" />
               <span>Docs</span>
               <ChevronRight className="w-4 h-4" />
@@ -333,10 +413,10 @@ const Documentation = () => {
             {/* Content */}
             {docContent ? (
               <article className="prose prose-invert max-w-none">
-                <h1 className="text-4xl font-bold text-foreground mb-4">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
                   {docContent.title}
                 </h1>
-                <p className="text-lg text-muted-foreground mb-8">
+                <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
                   {docContent.description}
                 </p>
 

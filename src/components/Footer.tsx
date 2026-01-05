@@ -1,11 +1,11 @@
-import { Sparkles, Github, Twitter, Linkedin } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
     <footer className="bg-muted/50 border-t border-border py-12">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-6">
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
@@ -59,21 +59,10 @@ export const Footer = () => {
                 </a>
               </li>
             </ul>
-            <div className="flex gap-4 mt-4">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Github className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-            </div>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-muted-foreground">
           <span>© 2026 Northstar Cloud Solutions LLC. All rights reserved.</span>
           <div className="flex gap-4">
             <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
