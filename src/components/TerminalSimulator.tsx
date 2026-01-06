@@ -20,6 +20,9 @@ export const TerminalSimulator = ({
   // Pre-calculate height to prevent layout shift
   const lineHeight = 1.5; // leading-relaxed
   const estimatedHeight = lines.length * lineHeight * 1.4; // Add padding for line breaks
+  // Mobile: max 300px, Desktop: max 400px
+  const maxHeightMobile = 300;
+  const maxHeightDesktop = 400;
 
   useEffect(() => {
     if (currentLineIndex >= lines.length) {
@@ -66,14 +69,18 @@ export const TerminalSimulator = ({
       {/* Terminal Content - Fixed height to prevent layout shift */}
       <div 
         className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden"
-        style={{ minHeight: `${Math.max(200, estimatedHeight * 16)}px` }}
+        style={{ 
+          minHeight: `${Math.max(180, Math.min(estimatedHeight * 16, maxHeightMobile))}px`,
+        }}
       >
         <div className="text-terminal-green mb-2 text-xs sm:text-sm">
           <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
         </div>
         <div 
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm"
-          style={{ minHeight: `${estimatedHeight * 16}px` }}
+          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm sm:[min-height:350px]"
+          style={{ 
+            minHeight: `${Math.max(150, Math.min(estimatedHeight * 16, 250))}px`,
+          }}
         >
           {displayedLines.map((line, i) => (
             <div key={i} className="terminal-line break-all sm:break-normal">

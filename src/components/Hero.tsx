@@ -50,7 +50,7 @@ export const Hero = () => {
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           {/* Left Column - Content */}
-          <div className="space-y-6 sm:space-y-8 order-2 lg:order-1">
+          <div className="space-y-6 sm:space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20">
               <Sparkles className="w-4 h-4 text-accent" />
               <span className="text-sm font-medium text-accent">Cloud Solutions Foundry</span>
@@ -69,7 +69,7 @@ export const Hero = () => {
               We handle the security, backups, and Day-2 operations so you can focus on scaling.
             </p>
             
-            <div className="flex flex-wrap gap-3 sm:gap-4 relative z-10">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 relative z-10">
               <Button asChild size="lg" variant="accent" className="min-h-[44px] w-full sm:w-auto">
                 <Link to="/products/nginx-proxy-manager">
                   Explore The Foundry
@@ -85,7 +85,7 @@ export const Hero = () => {
           </div>
           
           {/* Right Column - Terminal */}
-          <div className="relative mt-0 lg:mt-0 order-1 lg:order-2">
+          <div className="relative mt-8 lg:mt-0">
             <div className="absolute -inset-2 sm:-inset-4 bg-accent/5 rounded-xl blur-xl pointer-events-none" />
             <TerminalSimulator 
               lines={motdLines} 
