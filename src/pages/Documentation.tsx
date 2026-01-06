@@ -307,18 +307,19 @@ const Documentation = () => {
       {/* Mobile menu button */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 p-2 rounded-lg bg-card border border-border"
+        className="lg:hidden fixed top-20 left-4 z-50 p-2.5 rounded-lg bg-card border border-border shadow-lg hover:bg-muted transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+        aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
       >
-        {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        {mobileMenuOpen ? <X className="w-5 h-5 text-foreground" /> : <Menu className="w-5 h-5 text-foreground" />}
       </button>
       
       <div className="pt-16 flex">
         {/* Sidebar */}
         <aside className={cn(
-          "w-72 fixed left-0 top-16 bottom-0 border-r border-border bg-muted/30 overflow-y-auto z-40 transition-transform duration-200",
+          "w-72 fixed left-0 top-16 bottom-0 border-r border-border bg-muted/30 overflow-y-auto z-40 transition-transform duration-200 ease-in-out",
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Product Selector */}
             <div className="mb-6">
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
@@ -354,7 +355,7 @@ const Documentation = () => {
             </div>
 
             {/* Nav Items */}
-            <nav className="space-y-6">
+            <nav className="space-y-4 sm:space-y-6">
               {filteredSections.map((section) => {
                 const IconComponent = iconMap[section.icon] || Rocket;
                 return (
@@ -363,13 +364,13 @@ const Documentation = () => {
                       <IconComponent className="w-4 h-4 text-accent" />
                       {section.title}
                     </div>
-                    <ul className="space-y-1 ml-6">
+                    <ul className="space-y-1 ml-4 sm:ml-6">
                       {section.items.map((item) => (
                         <li key={item.id}>
                           <button
                             onClick={() => handleNavClick(item.id)}
                             className={cn(
-                              "block w-full text-left text-sm py-2 px-3 rounded-md transition-colors",
+                              "block w-full text-left text-sm py-2 px-3 rounded-md transition-colors break-words",
                               activeDocId === item.id
                                 ? "bg-accent/10 text-accent font-medium"
                                 : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -396,10 +397,10 @@ const Documentation = () => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-10 min-h-[calc(100vh-4rem)]">
-          <div className="max-w-3xl mx-auto">
+        <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-10 min-h-[calc(100vh-4rem)] overflow-x-hidden">
+          <div className="max-w-3xl mx-auto w-full">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 flex-wrap">
+            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 flex-wrap overflow-x-auto">
               <BookOpen className="w-4 h-4" />
               <span>Docs</span>
               <ChevronRight className="w-4 h-4" />
@@ -412,11 +413,11 @@ const Documentation = () => {
 
             {/* Content */}
             {docContent ? (
-              <article className="prose prose-invert max-w-none">
+              <article className="prose prose-invert max-w-none w-full overflow-x-hidden">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 break-words">
                   {docContent.title}
                 </h1>
-                <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
+                <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 leading-relaxed break-words">
                   {docContent.description}
                 </p>
 

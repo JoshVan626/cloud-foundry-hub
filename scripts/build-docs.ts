@@ -304,8 +304,24 @@ function generateDocs(files: Map<string, { frontMatter: FrontMatter; content: st
     };
   }
 
+  // Sort sections in desired order
+  const sectionOrder: Record<string, number> = {
+    'getting-started': 1,
+    'security': 2,
+    'operations': 3,
+    'backup': 4,
+    'monitoring': 5,
+    'upgrades': 6,
+  };
+  
+  const sortedSections = Array.from(sectionsMap.values()).sort((a, b) => {
+    const aOrder = sectionOrder[a.id] ?? 999;
+    const bOrder = sectionOrder[b.id] ?? 999;
+    return aOrder - bOrder;
+  });
+
   return {
-    sections: Array.from(sectionsMap.values()),
+    sections: sortedSections,
     contents,
   };
 }

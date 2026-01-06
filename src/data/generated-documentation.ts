@@ -48,18 +48,6 @@ export interface DocBlock {
 
 export const docSections: DocSection[] = [
   {
-    "id": "backup",
-    "title": "Backup & Restore",
-    "icon": "Database",
-    "productId": "nginx-proxy-manager",
-    "items": [
-      {
-        "id": "backup-restore",
-        "label": "Backup & Restore"
-      }
-    ]
-  },
-  {
     "id": "getting-started",
     "title": "Getting Started",
     "icon": "Rocket",
@@ -76,14 +64,14 @@ export const docSections: DocSection[] = [
     ]
   },
   {
-    "id": "monitoring",
-    "title": "Monitoring",
-    "icon": "Activity",
+    "id": "security",
+    "title": "Security & Hardening",
+    "icon": "Shield",
     "productId": "nginx-proxy-manager",
     "items": [
       {
-        "id": "monitoring",
-        "label": "Monitoring & Metrics"
+        "id": "security-hardening",
+        "label": "Security & Hardening"
       }
     ]
   },
@@ -108,14 +96,26 @@ export const docSections: DocSection[] = [
     ]
   },
   {
-    "id": "security",
-    "title": "Security & Hardening",
-    "icon": "Shield",
+    "id": "backup",
+    "title": "Backup & Restore",
+    "icon": "Database",
     "productId": "nginx-proxy-manager",
     "items": [
       {
-        "id": "security-hardening",
-        "label": "Security & Hardening"
+        "id": "backup-restore",
+        "label": "Backup & Restore"
+      }
+    ]
+  },
+  {
+    "id": "monitoring",
+    "title": "Monitoring",
+    "icon": "Activity",
+    "productId": "nginx-proxy-manager",
+    "items": [
+      {
+        "id": "monitoring",
+        "label": "Monitoring & Metrics"
       }
     ]
   },

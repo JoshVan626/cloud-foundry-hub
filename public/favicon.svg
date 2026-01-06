@@ -1,11 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Black background -->
-  <rect width="100" height="100" fill="#000000"/>
+  <!-- Teal/light blue background (square) -->
+  <rect width="100" height="100" fill="#14b8a6" rx="8"/>
   
-  <!-- White circular outline (thick) -->
-  <circle cx="50" cy="50" r="42" fill="none" stroke="#ffffff" stroke-width="4"/>
-  
-  <!-- Cloud shape (lower-left quadrant, rounded/organic) -->
+  <!-- White cloud shape (lower portion) -->
   <path d="M 20 70 
            Q 14 70 14 64 
            Q 14 58 20 58 
@@ -28,7 +25,7 @@
            Q 28 67 20 70 Z" 
         fill="#ffffff"/>
   
-  <!-- Four-pointed star/arrow pointing up and slightly right (emerging from cloud upper-right) -->
+  <!-- White four-pointed star/arrow pointing up and slightly right -->
   <!-- Main upward point -->
   <path d="M 62 55 
            L 70 25 
