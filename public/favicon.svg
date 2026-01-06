@@ -3,38 +3,58 @@
   <rect width="100" height="100" fill="#000000"/>
   
   <!-- White circular outline (thick) -->
-  <circle cx="50" cy="50" r="42" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="50" cy="50" r="42" fill="none" stroke="#ffffff" stroke-width="4"/>
   
-  <!-- Cloud shape (lower-left portion, organic/rounded) -->
-  <path d="M 20 65 
-           Q 15 65 15 60 
-           Q 15 55 20 55 
-           Q 20 50 25 50 
-           Q 28 50 30 52 
-           Q 32 50 35 50 
-           Q 38 50 40 52 
-           Q 42 50 45 50 
-           Q 48 50 50 52 
-           Q 52 50 55 50 
-           Q 58 50 60 52 
-           Q 62 50 65 50 
-           Q 68 50 70 52 
-           Q 72 50 75 50 
-           Q 78 50 78 53 
-           Q 78 55 75 55 
-           L 73 55 
-           Q 73 60 68 60 
-           L 32 60 
-           Q 28 63 20 65 Z" 
+  <!-- Cloud shape (lower-left quadrant, rounded/organic) -->
+  <path d="M 20 70 
+           Q 14 70 14 64 
+           Q 14 58 20 58 
+           Q 20 52 26 52 
+           Q 29 52 32 55 
+           Q 35 52 38 52 
+           Q 41 52 44 55 
+           Q 47 52 50 52 
+           Q 53 52 56 55 
+           Q 59 52 62 52 
+           Q 65 52 68 55 
+           Q 71 52 74 52 
+           Q 77 52 80 55 
+           Q 83 52 86 52 
+           Q 88 52 88 56 
+           Q 88 59 86 59 
+           L 84 59 
+           Q 84 64 79 64 
+           L 33 64 
+           Q 28 67 20 70 Z" 
         fill="#ffffff"/>
   
-  <!-- Star/Arrow pointing up and slightly right (emerging from cloud upper-right) -->
-  <path d="M 62 52 
-           L 68 32 
-           L 74 52 
-           L 72 52 
-           L 72 48 
-           L 64 48 
-           L 64 52 Z" 
+  <!-- Four-pointed star/arrow pointing up and slightly right (emerging from cloud upper-right) -->
+  <!-- Main upward point -->
+  <path d="M 62 55 
+           L 70 25 
+           L 78 55 
+           L 76 55 
+           L 76 50 
+           L 68 50 
+           L 68 55 Z" 
+        fill="#ffffff"/>
+  <!-- Right point -->
+  <path d="M 78 55 
+           L 85 62 
+           L 81 62 
+           L 77 58 
+           L 77 55 Z" 
+        fill="#ffffff"/>
+  <!-- Left point -->
+  <path d="M 62 55 
+           L 55 62 
+           L 59 62 
+           L 63 58 
+           L 63 55 Z" 
+        fill="#ffffff"/>
+  <!-- Bottom point (smaller, integrated with cloud) -->
+  <path d="M 68 55 
+           L 70 60 
+           L 72 55 Z" 
         fill="#ffffff"/>
 </svg>
