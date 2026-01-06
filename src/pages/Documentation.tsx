@@ -304,13 +304,23 @@ const Documentation = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Mobile menu button */}
+      {/* Mobile docs menu button - positioned to avoid confusion with navbar menu */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 p-2.5 rounded-lg bg-card border border-border shadow-lg hover:bg-muted transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-        aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+        className="lg:hidden fixed top-20 right-4 z-50 px-3 py-2 rounded-lg bg-card border border-border shadow-lg hover:bg-muted transition-colors text-sm font-medium text-foreground flex items-center gap-2"
+        aria-label={mobileMenuOpen ? "Close docs menu" : "Open docs menu"}
       >
-        {mobileMenuOpen ? <X className="w-5 h-5 text-foreground" /> : <Menu className="w-5 h-5 text-foreground" />}
+        {mobileMenuOpen ? (
+          <>
+            <X className="w-4 h-4" />
+            <span>Close</span>
+          </>
+        ) : (
+          <>
+            <BookOpen className="w-4 h-4" />
+            <span>Docs Menu</span>
+          </>
+        )}
       </button>
       
       <div className="pt-16 flex">

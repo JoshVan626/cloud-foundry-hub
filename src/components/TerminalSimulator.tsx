@@ -17,6 +17,10 @@ export const TerminalSimulator = ({
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
+  // Pre-calculate height to prevent layout shift
+  const lineHeight = 1.5; // leading-relaxed
+  const estimatedHeight = lines.length * lineHeight * 1.4; // Add padding for line breaks
+
   useEffect(() => {
     if (currentLineIndex >= lines.length) {
       setIsComplete(true);
@@ -59,15 +63,27 @@ export const TerminalSimulator = ({
         <span className="text-terminal-muted text-xs ml-2">northstar-npm-01 — bash</span>
       </div>
       
-      {/* Terminal Content */}
-      <div className="p-3 sm:p-4 min-h-[200px] sm:min-h-[300px] overflow-x-auto">
+      {/* Terminal Content - Fixed height to prevent layout shift */}
+      <div 
+        className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden"
+        style={{ minHeight: `${Math.max(200, estimatedHeight * 16)}px` }}
+      >
         <div className="text-terminal-green mb-2 text-xs sm:text-sm">
           <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
         </div>
-        <div className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm">
+        <div 
+          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm"
+          style={{ minHeight: `${estimatedHeight * 16}px` }}
+        >
           {displayedLines.map((line, i) => (
             <div key={i} className="terminal-line break-all sm:break-normal">
-              {line}
+              {line || '\u00A0'}
+            </div>
+          ))}
+          {/* Reserve space for remaining lines */}
+          {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
+            <div key={`placeholder-${i}`} className="terminal-line break-all sm:break-normal">
+              {'\u00A0'}
             </div>
           ))}
           {!isComplete && (

@@ -42,15 +42,15 @@ const keyBenefits = [
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center py-20 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
       
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           {/* Left Column - Content */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8 order-2 lg:order-1">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20">
               <Sparkles className="w-4 h-4 text-accent" />
               <span className="text-sm font-medium text-accent">Cloud Solutions Foundry</span>
@@ -64,19 +64,19 @@ export const Hero = () => {
               <span className="text-gradient">Infrastructure.</span>
             </h1>
             
-            <p className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed">
               Northstar Cloud Solutions delivers production-ready AWS appliances. 
               We handle the security, backups, and Day-2 operations so you can focus on scaling.
             </p>
             
             <div className="flex flex-wrap gap-3 sm:gap-4 relative z-10">
-              <Button asChild size="lg" variant="accent" className="min-h-[44px]">
+              <Button asChild size="lg" variant="accent" className="min-h-[44px] w-full sm:w-auto">
                 <Link to="/products/nginx-proxy-manager">
                   Explore The Foundry
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="min-h-[44px]">
+              <Button asChild size="lg" variant="outline" className="min-h-[44px] w-full sm:w-auto">
                 <Link to="/docs">
                   Read the Docs
                 </Link>
@@ -85,8 +85,8 @@ export const Hero = () => {
           </div>
           
           {/* Right Column - Terminal */}
-          <div className="relative mt-8 lg:mt-0">
-            <div className="absolute -inset-4 bg-accent/5 rounded-xl blur-xl pointer-events-none" />
+          <div className="relative mt-0 lg:mt-0 order-1 lg:order-2">
+            <div className="absolute -inset-2 sm:-inset-4 bg-accent/5 rounded-xl blur-xl pointer-events-none" />
             <TerminalSimulator 
               lines={motdLines} 
               typingSpeed={15}
@@ -96,7 +96,7 @@ export const Hero = () => {
         </div>
 
         {/* Key Benefits Section */}
-        <div className="mt-16 sm:mt-20 lg:mt-24 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="mt-12 sm:mt-16 md:mt-20 lg:mt-24 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {keyBenefits.map((benefit) => (
             <div 
               key={benefit.title}
