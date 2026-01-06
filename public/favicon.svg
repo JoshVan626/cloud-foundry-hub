@@ -1,57 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Teal/light blue background (square) -->
-  <rect width="100" height="100" fill="#14b8a6" rx="8"/>
+  <!-- Rounded square background with accent color (cyan/teal: hsl(185, 70%, 50%)) -->
+  <rect width="100" height="100" fill="hsl(185, 70%, 50%)" rx="12"/>
   
-  <!-- White cloud shape (lower portion) -->
-  <path d="M 20 70 
-           Q 14 70 14 64 
-           Q 14 58 20 58 
-           Q 20 52 26 52 
-           Q 29 52 32 55 
-           Q 35 52 38 52 
-           Q 41 52 44 55 
-           Q 47 52 50 52 
-           Q 53 52 56 55 
-           Q 59 52 62 52 
-           Q 65 52 68 55 
-           Q 71 52 74 52 
-           Q 77 52 80 55 
-           Q 83 52 86 52 
-           Q 88 52 88 56 
-           Q 88 59 86 59 
-           L 84 59 
-           Q 84 64 79 64 
-           L 33 64 
-           Q 28 67 20 70 Z" 
-        fill="#ffffff"/>
-  
-  <!-- White four-pointed star/arrow pointing up and slightly right -->
-  <!-- Main upward point -->
-  <path d="M 62 55 
-           L 70 25 
-           L 78 55 
-           L 76 55 
-           L 76 50 
-           L 68 50 
-           L 68 55 Z" 
-        fill="#ffffff"/>
-  <!-- Right point -->
-  <path d="M 78 55 
-           L 85 62 
-           L 81 62 
-           L 77 58 
-           L 77 55 Z" 
-        fill="#ffffff"/>
-  <!-- Left point -->
-  <path d="M 62 55 
-           L 55 62 
-           L 59 62 
-           L 63 58 
-           L 63 55 Z" 
-        fill="#ffffff"/>
-  <!-- Bottom point (smaller, integrated with cloud) -->
-  <path d="M 68 55 
-           L 70 60 
-           L 72 55 Z" 
-        fill="#ffffff"/>
+  <!-- Sparkles icon - main star in center -->
+  <g fill="hsl(240, 10%, 3.9%)" opacity="0.95">
+    <!-- Main 8-pointed star -->
+    <path d="M 50 25 L 52 40 L 67 40 L 56 48 L 60 63 L 50 55 L 40 63 L 44 48 L 33 40 L 48 40 Z"/>
+    
+    <!-- Small sparkles around the main star -->
+    <circle cx="28" cy="28" r="1.5" opacity="0.9"/>
+    <circle cx="72" cy="28" r="1.5" opacity="0.9"/>
+    <circle cx="28" cy="72" r="1.5" opacity="0.9"/>
+    <circle cx="72" cy="72" r="1.5" opacity="0.9"/>
+    
+    <!-- Tiny sparkles in corners -->
+    <path d="M 20 20 L 20.5 21.5 L 22 21.5 L 20.5 23 L 21 24.5 L 20 23 L 19 24.5 L 19.5 23 L 18 21.5 L 19.5 21.5 Z" opacity="0.7"/>
+    <path d="M 80 20 L 80.5 21.5 L 82 21.5 L 80.5 23 L 81 24.5 L 80 23 L 79 24.5 L 79.5 23 L 78 21.5 L 79.5 21.5 Z" opacity="0.7"/>
+    <path d="M 20 80 L 20.5 78.5 L 22 78.5 L 20.5 77 L 21 75.5 L 20 77 L 19 75.5 L 19.5 77 L 18 78.5 L 19.5 78.5 Z" opacity="0.7"/>
+    <path d="M 80 80 L 80.5 78.5 L 82 78.5 L 80.5 77 L 81 75.5 L 80 77 L 79 75.5 L 79.5 77 L 78 78.5 L 79.5 78.5 Z" opacity="0.7"/>
+  </g>
 </svg>
