@@ -24,8 +24,8 @@ export const Footer = () => {
             <h4 className="font-semibold text-foreground mb-4">Products</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/products/nginx-proxy-manager" className="hover:text-foreground transition-colors">Nginx Proxy Manager</Link></li>
-              <li><Link to="/products/portainer-business" className="hover:text-foreground transition-colors">Portainer Business</Link></li>
-              <li><Link to="/products/vault-cluster" className="hover:text-foreground transition-colors">HashiCorp Vault</Link></li>
+              <li><Link to="/products/wordpress-hardened" className="hover:text-foreground transition-colors">WordPress (Hardened Edition)</Link></li>
+              <li><Link to="/products/wikijs-hardened" className="hover:text-foreground transition-colors">Wiki.js (Hardened Edition)</Link></li>
             </ul>
           </div>
 
