@@ -24,8 +24,8 @@ const Terms = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">2. Description of Services</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Northstar Cloud Solutions LLC provides production-hardened Amazon Machine Images (AMIs) available 
-              through the AWS Marketplace. These AMIs include pre-configured open-source software with security 
+              Northstar Cloud Solutions LLC provides production-hardened Amazon Machine Images (AMIs) for use on 
+              Amazon Web Services (AWS). These AMIs include pre-configured open-source software with security 
               hardening, automated operational tooling, and integration with AWS services such as CloudWatch and S3.
             </p>
           </section>
@@ -34,8 +34,8 @@ const Terms = () => {
             <h2 className="text-2xl font-semibold text-foreground mb-4">3. License Grant</h2>
             <p className="text-muted-foreground leading-relaxed">
               Subject to your compliance with these Terms, we grant you a limited, non-exclusive, non-transferable 
-              license to use our AMI products in accordance with the AWS Marketplace Terms and any applicable 
-              subscription or licensing agreement.
+              license to use our AMI products. Your use of our AMIs is also subject to AWS Terms of Service and any 
+              applicable subscription or licensing agreement.
             </p>
           </section>
 
@@ -69,8 +69,8 @@ const Terms = () => {
             <h2 className="text-2xl font-semibold text-foreground mb-4">7. Contact Information</h2>
             <p className="text-muted-foreground leading-relaxed">
               For questions about these Terms, please contact us at:{" "}
-              <a href="mailto:legal@northstarcloud.io" className="text-accent hover:underline">
-                legal@northstarcloud.io
+              <a href="mailto:support@northstarcloud.io" className="text-accent hover:underline">
+                support@northstarcloud.io
               </a>
             </p>
           </section>

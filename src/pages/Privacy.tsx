@@ -24,12 +24,18 @@ const Privacy = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">2. Information We Collect</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              We may collect the following types of information:
+              We collect minimal information necessary to operate our website. We do not collect personal data unless 
+              you voluntarily contact us by email. The information we may collect includes:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
               <li><strong>Usage Data:</strong> Information about how you interact with our website, including pages visited and time spent.</li>
-              <li><strong>Technical Data:</strong> IP address, browser type, and device information for analytics and security purposes.</li>
+              <li><strong>Technical Data:</strong> IP address, browser type, and device information for security and website functionality purposes.</li>
+              <li><strong>Contact Information:</strong> If you contact us by email, we collect the information you provide in your message.</li>
             </ul>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              We use essential cookies only for website operation. We do not use tracking cookies or third-party analytics 
+              without your explicit consent.
+            </p>
           </section>
 
           <section className="mb-8">

@@ -34,8 +34,6 @@ export const Footer = () => {
             <h4 className="font-semibold text-foreground mb-4">Resources</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/docs" className="hover:text-foreground transition-colors">Documentation</Link></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Terraform Registry</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">AWS Marketplace</a></li>
             </ul>
           </div>
 
@@ -46,16 +44,6 @@ export const Footer = () => {
               <li>
                 <a href="mailto:support@northstarcloud.io" className="hover:text-foreground transition-colors">
                   support@northstarcloud.io
-                </a>
-              </li>
-              <li>
-                <a href="mailto:legal@northstarcloud.io" className="hover:text-foreground transition-colors">
-                  legal@northstarcloud.io
-                </a>
-              </li>
-              <li>
-                <a href="https://northstarcloud.io" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
-                  northstarcloud.io
                 </a>
               </li>
             </ul>
