@@ -57,13 +57,13 @@ export const TerminalSimulator = ({
       className
     )}>
       {/* Terminal Header */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-terminal-header border-b border-terminal-border">
-        <div className="flex gap-1.5">
+      <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-terminal-header border-b border-terminal-border">
+        <div className="flex gap-1.5 flex-shrink-0">
           <div className="w-3 h-3 rounded-full bg-red-500/80" />
           <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
           <div className="w-3 h-3 rounded-full bg-green-500/80" />
         </div>
-        <span className="text-terminal-muted text-xs ml-2">northstar-npm-01 — bash</span>
+        <span className="text-terminal-muted text-xs ml-2 truncate">northstar-npm-01 — bash</span>
       </div>
       
       {/* Terminal Content - Fixed height to prevent layout shift */}
@@ -73,23 +73,23 @@ export const TerminalSimulator = ({
           minHeight: `${Math.max(180, Math.min(estimatedHeight * 16, maxHeightMobile))}px`,
         }}
       >
-        <div className="text-terminal-green mb-2 text-xs sm:text-sm">
+        <div className="text-terminal-green mb-2 text-xs sm:text-sm break-words break-all">
           <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
         </div>
         <div 
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm sm:[min-height:350px]"
+          className="text-terminal-text whitespace-pre-wrap leading-relaxed text-xs sm:text-sm sm:[min-height:350px] break-words"
           style={{ 
             minHeight: `${Math.max(150, Math.min(estimatedHeight * 16, 250))}px`,
           }}
         >
           {displayedLines.map((line, i) => (
-            <div key={i} className="terminal-line break-all sm:break-normal">
+            <div key={i} className="terminal-line break-words break-all">
               {line || '\u00A0'}
             </div>
           ))}
           {/* Reserve space for remaining lines */}
           {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-            <div key={`placeholder-${i}`} className="terminal-line break-all sm:break-normal">
+            <div key={`placeholder-${i}`} className="terminal-line break-words break-all">
               {'\u00A0'}
             </div>
           ))}

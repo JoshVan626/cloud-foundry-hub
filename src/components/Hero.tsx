@@ -51,20 +51,20 @@ export const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           {/* Left Column - Content */}
           <div className="space-y-6 sm:space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium text-accent">Cloud Solutions Foundry</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 flex-wrap">
+              <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
+              <span className="text-sm font-medium text-accent break-words">Cloud Solutions Foundry</span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight break-words">
               <span className="text-foreground">Enterprise-Grade Hardening</span>
               <br />
               <span className="text-foreground">for Open Source</span>
               <br />
-              <span className="text-gradient">Infrastructure.</span>
+              <span className="text-gradient break-words">Infrastructure.</span>
             </h1>
             
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed break-words">
               Northstar Cloud Solutions delivers production-ready AWS appliances. 
               We handle the security, backups, and Day-2 operations so you can focus on scaling.
             </p>
@@ -105,8 +105,8 @@ export const Hero = () => {
               <div className="w-12 h-12 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center mb-4">
                 <benefit.icon className="w-6 h-6 text-accent" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">{benefit.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{benefit.description}</p>
+              <h3 className="text-lg font-semibold text-foreground mb-2 break-words">{benefit.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed break-words">{benefit.description}</p>
             </div>
           ))}
         </div>
