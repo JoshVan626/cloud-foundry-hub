@@ -396,7 +396,7 @@ const Documentation = () => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-10">
+        <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-10 min-h-[calc(100vh-4rem)]">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
             <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 flex-wrap">
@@ -455,7 +455,9 @@ const Documentation = () => {
         </main>
       </div>
 
-      <Footer />
+      <div className="lg:ml-72">
+        <Footer />
+      </div>
     </div>
   );
 };
