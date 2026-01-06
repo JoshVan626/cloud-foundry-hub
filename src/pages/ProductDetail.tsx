@@ -6,6 +6,7 @@ import { CapabilityTag } from "@/components/CapabilityTag";
 import { CodeSwitcher } from "@/components/CodeSwitcher";
 import { CLIShowcase } from "@/components/CLIShowcase";
 import { TerminalSimulator } from "@/components/TerminalSimulator";
+import { Button } from "@/components/ui/button";
 import { 
   ArrowLeft, 
   Zap, 
