@@ -94,30 +94,35 @@ export const TerminalSimulator = ({
       {/* Terminal Content - FIXED height to prevent layout shift and page jumping */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4 overflow-x-auto"
+        className="p-3 sm:p-4"
         style={{ 
           height: `${fixedHeightMobile}px`,
+          overflowX: 'auto',
+          overflowY: 'hidden',
         }}
       >
-        <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap flex-shrink-0">
+        <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap flex-shrink-0" style={{ minWidth: 'max-content' }}>
           <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
         </div>
         <div 
           ref={contentRef}
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm overflow-y-auto font-mono"
+          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono"
           style={{ 
             height: `calc(${fixedHeightMobile}px - 3rem)`,
             maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
+            overflowY: 'auto',
+            overflowX: 'auto',
+            minWidth: 'max-content',
           }}
         >
           {displayedLines.map((line, i) => (
-            <div key={i} className="terminal-line whitespace-pre">
+            <div key={i} className="terminal-line whitespace-pre min-w-max">
               {line || '\u00A0'}
             </div>
           ))}
           {/* Reserve space for remaining lines to prevent height changes */}
           {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-            <div key={`placeholder-${i}`} className="terminal-line whitespace-pre">
+            <div key={`placeholder-${i}`} className="terminal-line whitespace-pre min-w-max">
               {'\u00A0'}
             </div>
           ))}
