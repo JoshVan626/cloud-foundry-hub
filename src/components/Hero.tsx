@@ -2,6 +2,8 @@ import { TerminalSimulator } from "./TerminalSimulator";
 import { Button } from "./ui/button";
 import { ArrowRight, Sparkles, Shield, Cog, Cloud } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { debugOverflow } from "@/utils/debugOverflow";
 
 const motdLines = [
   "╔══════════════════════════════════════════════════════════════╗",
@@ -41,22 +43,32 @@ const keyBenefits = [
 ];
 
 export const Hero = () => {
+  useEffect(() => {
+    // Debug overflow in development
+    if (import.meta.env.DEV) {
+      const timer = setTimeout(() => {
+        debugOverflow();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20">
+    <section className="relative min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20 w-full max-w-full overflow-x-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
       
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 w-full max-w-full">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center w-full max-w-full">
           {/* Left Column - Content */}
-          <div className="space-y-6 sm:space-y-8">
+          <div className="space-y-6 sm:space-y-8 w-full min-w-0">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 flex-wrap">
               <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
               <span className="text-sm font-medium text-accent break-words">Cloud Solutions Foundry</span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight break-words">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight break-words overflow-wrap-anywhere">
               <span className="text-foreground">Enterprise-Grade Hardening</span>
               <br />
               <span className="text-foreground">for Open Source</span>
@@ -64,7 +76,7 @@ export const Hero = () => {
               <span className="text-gradient break-words">Infrastructure.</span>
             </h1>
             
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed break-words">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed break-words overflow-wrap-anywhere">
               Northstar Cloud Solutions delivers production-ready AWS appliances. 
               We handle the security, backups, and Day-2 operations so you can focus on scaling.
             </p>
@@ -85,7 +97,7 @@ export const Hero = () => {
           </div>
           
           {/* Right Column - Terminal */}
-          <div className="relative mt-8 lg:mt-0">
+          <div className="relative mt-8 lg:mt-0 w-full max-w-full min-w-0">
             <TerminalSimulator 
               lines={motdLines} 
               typingSpeed={10}

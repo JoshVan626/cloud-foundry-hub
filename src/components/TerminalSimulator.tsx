@@ -76,7 +76,7 @@ export const TerminalSimulator = ({
 
   return (
     <div className={cn(
-      "bg-terminal rounded-lg border border-terminal-border font-mono text-sm",
+      "bg-terminal rounded-lg border border-terminal-border font-mono text-sm w-full max-w-full",
       className
     )}>
       {/* Terminal Header */}
@@ -89,39 +89,37 @@ export const TerminalSimulator = ({
         <span className="text-terminal-muted text-xs ml-2 truncate">northstar-npm-01 — bash</span>
       </div>
       
-      {/* Terminal Content - Scrollable container */}
+      {/* Terminal Content - Scrollable container with proper containment */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden"
+        className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden w-full max-w-full"
         style={{ 
           height: `${fixedHeightMobile}px`,
           WebkitOverflowScrolling: 'touch',
         }}
       >
-        <div style={{ minWidth: 'max-content' }}>
-          <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap">
-            <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
-          </div>
-          <div 
-            ref={contentRef}
-            className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono"
-            style={{ 
-              height: `calc(${fixedHeightMobile}px - 3rem)`,
-              maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
-              minWidth: 'max-content',
-            }}
-          >
-            {displayedLines.map((line, i) => (
-              <div key={i} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-                {line || '\u00A0'}
-              </div>
-            ))}
-            {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-              <div key={`placeholder-${i}`} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-                {'\u00A0'}
-              </div>
-            ))}
-          </div>
+        <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap" style={{ minWidth: 'max-content' }}>
+          <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
+        </div>
+        <div 
+          ref={contentRef}
+          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono"
+          style={{ 
+            height: `calc(${fixedHeightMobile}px - 3rem)`,
+            maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
+            minWidth: 'max-content',
+          }}
+        >
+          {displayedLines.map((line, i) => (
+            <div key={i} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+              {line || '\u00A0'}
+            </div>
+          ))}
+          {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
+            <div key={`placeholder-${i}`} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+              {'\u00A0'}
+            </div>
+          ))}
         </div>
       </div>
     </div>

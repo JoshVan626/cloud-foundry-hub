@@ -18,10 +18,10 @@ const Index = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
       <Navbar />
       <Hero />
-      <div id="foundry">
+      <div id="foundry" className="w-full max-w-full">
         <FoundryCatalog />
       </div>
       <Footer />
