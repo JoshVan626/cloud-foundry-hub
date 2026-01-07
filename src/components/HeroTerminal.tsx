@@ -4,24 +4,28 @@ import { cn } from "@/lib/utils";
 export const HeroTerminal = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [visibleLines, setVisibleLines] = useState<number>(0);
+  const [commandText, setCommandText] = useState("");
+  const [visibleOutputLines, setVisibleOutputLines] = useState<number>(0);
+  const [showCursor, setShowCursor] = useState(true);
+  const [isComplete, setIsComplete] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Deployment content lines
-  const deploymentLines = [
-    { content: "$ northstar-cloud deploy npm --hardened", type: "command" },
-    { content: "", type: "empty" },
-    { content: "Initializing appliance…", type: "text" },
-    { content: "Resolving: Nginx Proxy Manager (Hardened Edition)", type: "resolve" },
-    { content: "Target: AWS", type: "text" },
-    { content: "", type: "empty" },
-    { content: "[ 1/4 ] Applying hardened defaults…           ✓", type: "step" },
-    { content: "[ 2/4 ] Wiring backups (atomic + S3-ready)…  ✓", type: "step" },
-    { content: "[ 3/4 ] Enabling CloudWatch logs/metrics…    ✓", type: "step" },
-    { content: "[ 4/4 ] Running first-boot checks…           ✓", type: "step" },
-    { content: "", type: "empty" },
-    { content: "DEPLOY COMPLETE", type: "complete" },
-    { content: "Production-ready from first boot.", type: "text" },
+  const command = "northstar-cloud deploy npm --hardened";
+  const fullCommand = `$ ${command}`;
+
+  // Output lines (exact as specified)
+  const outputLines = [
+    "Initializing appliance…",
+    "Resolving: Nginx Proxy Manager (Hardened Edition)",
+    "Target: AWS",
+    "",
+    "[ 1/4 ] Applying hardened defaults…           ✓",
+    "[ 2/4 ] Wiring backups (atomic + S3-ready)…  ✓",
+    "[ 3/4 ] Enabling CloudWatch logs/metrics…    ✓",
+    "[ 4/4 ] Running first-boot checks…           ✓",
+    "",
+    "DEPLOY COMPLETE",
+    "Production-ready from first boot.",
   ];
 
   // Check for reduced motion preference
@@ -37,46 +41,113 @@ export const HeroTerminal = () => {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Progressive line reveal animation
+  // Cursor blink animation
+  useEffect(() => {
+    if (prefersReducedMotion || isComplete) return;
+
+    const interval = setInterval(() => {
+      setShowCursor(prev => !prev);
+    }, 530); // ~530ms blink rate
+
+    return () => clearInterval(interval);
+  }, [prefersReducedMotion, isComplete]);
+
+  // Terminal typing animation
   useEffect(() => {
     if (prefersReducedMotion) {
-      setVisibleLines(deploymentLines.length);
+      // Show everything immediately
+      setCommandText(fullCommand);
+      setVisibleOutputLines(outputLines.length);
+      setIsComplete(true);
+      setShowCursor(true);
       return;
     }
 
-    // Show command immediately
-    setVisibleLines(1);
+    // Phase 1: Type command character-by-character
+    let charIndex = 0;
+    const commandTimers: NodeJS.Timeout[] = [];
 
-    // Reveal remaining lines progressively
-    const timers: NodeJS.Timeout[] = [];
-    let cumulativeDelay = 0;
-    
-    for (let i = 1; i < deploymentLines.length; i++) {
-      const delay = 150 + Math.random() * 70; // 150-220ms per line
-      cumulativeDelay += delay;
-      const timer = setTimeout(() => {
-        setVisibleLines(i + 1);
-      }, cumulativeDelay);
-      timers.push(timer);
-    }
+    const typeCommand = () => {
+      if (charIndex < fullCommand.length) {
+        const typingSpeed = 25 + Math.random() * 20; // 25-45ms per character
+        const timer = setTimeout(() => {
+          setCommandText(fullCommand.slice(0, charIndex + 1));
+          charIndex++;
+          typeCommand();
+        }, typingSpeed);
+        commandTimers.push(timer);
+      } else {
+        // Command finished, wait 250-400ms then start output
+        const waitTime = 250 + Math.random() * 150; // 250-400ms
+        const timer = setTimeout(() => {
+          setShowCursor(false); // Hide cursor during output
+          printOutput();
+        }, waitTime);
+        commandTimers.push(timer);
+      }
+    };
+
+    // Phase 2: Print output lines one-by-one
+    let outputIndex = 0;
+    const printOutput = () => {
+      if (outputIndex < outputLines.length) {
+        // Check if this is a step line (1/4, 2/4, etc.) for extra delay
+        const isStepLine = outputLines[outputIndex].includes("[ ");
+        const delay = isStepLine 
+          ? 150 + Math.random() * 130 // 150-280ms for step lines
+          : 50 + Math.random() * 50; // 50-100ms for other lines
+
+        const timer = setTimeout(() => {
+          setVisibleOutputLines(outputIndex + 1);
+          outputIndex++;
+          printOutput();
+        }, delay);
+        commandTimers.push(timer);
+      } else {
+        // All output printed, show cursor at end
+        setIsComplete(true);
+        setShowCursor(true);
+      }
+    };
+
+    // Start typing command
+    typeCommand();
 
     return () => {
-      timers.forEach(timer => clearTimeout(timer));
+      commandTimers.forEach(timer => clearTimeout(timer));
     };
   }, [prefersReducedMotion]);
 
-  const renderLine = (line: typeof deploymentLines[0], index: number) => {
-    if (line.type === "command") {
-      return (
-        <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-          <span className="text-terminal-muted">$</span>{" "}
-          <span className="text-cyan-400">northstar-cloud</span>{" "}
-          <span className="text-terminal-text">deploy npm --hardened</span>
-        </div>
-      );
+  // Compute command parts for rendering
+  const getCommandParts = () => {
+    if (commandText.length <= 2) return { prompt: "$ ", northstar: "", rest: "" };
+    
+    const afterPrompt = commandText.slice(2);
+    const northstarCloudLen = "northstar-cloud".length;
+    
+    if (afterPrompt.length <= northstarCloudLen) {
+      return {
+        prompt: "$ ",
+        northstar: afterPrompt,
+        rest: ""
+      };
+    }
+    
+    return {
+      prompt: "$ ",
+      northstar: afterPrompt.slice(0, northstarCloudLen),
+      rest: afterPrompt.slice(northstarCloudLen)
+    };
+  };
+
+  const commandParts = getCommandParts();
+
+  const renderOutputLine = (line: string, index: number) => {
+    if (line === "") {
+      return <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>&nbsp;</div>;
     }
 
-    if (line.type === "resolve") {
+    if (line.includes("Resolving:")) {
       return (
         <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
           <span className="text-terminal-text">Resolving: Nginx Proxy Manager </span>
@@ -85,9 +156,9 @@ export const HeroTerminal = () => {
       );
     }
 
-    if (line.type === "step") {
-      // Extract the checkmark
-      const parts = line.content.split("✓");
+    if (line.includes("[ ") && line.includes("]")) {
+      // Step line with checkmark
+      const parts = line.split("✓");
       return (
         <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
           <span className="text-terminal-text">{parts[0]}</span>
@@ -96,18 +167,18 @@ export const HeroTerminal = () => {
       );
     }
 
-    if (line.type === "complete") {
+    if (line === "DEPLOY COMPLETE") {
       return (
         <div key={index} className="whitespace-pre font-semibold" style={{ minWidth: 'max-content' }}>
-          <span className="text-green-500">{line.content}</span>
+          <span className="text-green-500">{line}</span>
         </div>
       );
     }
 
-    // Empty line or regular text
+    // Regular text line
     return (
       <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-        <span className="text-terminal-text">{line.content}</span>
+        <span className="text-terminal-text">{line}</span>
       </div>
     );
   };
@@ -139,7 +210,29 @@ export const HeroTerminal = () => {
           ref={contentRef}
           className="text-terminal-text text-xs sm:text-sm font-mono"
         >
-          {deploymentLines.slice(0, visibleLines).map((line, index) => renderLine(line, index))}
+          {/* Command line with typing animation */}
+          <div className="whitespace-pre mb-1" style={{ minWidth: 'max-content' }}>
+            <span className="text-terminal-muted">{commandParts.prompt}</span>
+            {commandParts.northstar && (
+              <span className="text-cyan-400">{commandParts.northstar}</span>
+            )}
+            {commandParts.rest && (
+              <span className="text-terminal-text">{commandParts.rest}</span>
+            )}
+            {!isComplete && showCursor && (
+              <span className="inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 animate-pulse">▍</span>
+            )}
+          </div>
+
+          {/* Output lines */}
+          {outputLines.slice(0, visibleOutputLines).map((line, index) => renderOutputLine(line, index))}
+
+          {/* Final cursor after completion */}
+          {isComplete && showCursor && (
+            <div className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+              <span className="inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 animate-pulse">▍</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
