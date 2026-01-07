@@ -17,7 +17,7 @@ export const TerminalSimulator = ({
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLPreElement>(null);
 
   // Pre-calculate FIXED height to prevent layout shift
   const lineHeight = 1.4;
@@ -86,41 +86,39 @@ export const TerminalSimulator = ({
           <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
           <div className="w-3 h-3 rounded-full bg-green-500/80" />
         </div>
-        <span className="text-terminal-muted text-xs ml-2 truncate">northstar-npm-01 — bash</span>
+        <span className="text-terminal-muted text-xs ml-2 truncate">northstar.cloud — brand</span>
       </div>
       
       {/* Terminal Content - Scrollable container with proper containment */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden w-full max-w-full"
+        className="p-3 sm:p-4 overflow-x-auto overflow-y-auto w-full max-w-full"
         style={{ 
           height: `${fixedHeightMobile}px`,
           WebkitOverflowScrolling: 'touch',
         }}
       >
-        <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap" style={{ minWidth: 'max-content' }}>
-          <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
-        </div>
-        <div 
+        <pre 
           ref={contentRef}
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono"
+          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono min-w-max"
           style={{ 
             height: `calc(${fixedHeightMobile}px - 3rem)`,
             maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
-            minWidth: 'max-content',
           }}
         >
           {displayedLines.map((line, i) => (
-            <div key={i} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+            <span key={i}>
               {line || '\u00A0'}
-            </div>
+              {'\n'}
+            </span>
           ))}
           {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-            <div key={`placeholder-${i}`} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+            <span key={`placeholder-${i}`}>
               {'\u00A0'}
-            </div>
+              {'\n'}
+            </span>
           ))}
-        </div>
+        </pre>
       </div>
     </div>
   );
