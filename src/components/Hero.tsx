@@ -1,70 +1,10 @@
-import { TerminalSimulator } from "./TerminalSimulator";
+import { HeroTerminal } from "./HeroTerminal";
 import { Button } from "./ui/button";
 import { ArrowRight, Sparkles, Shield, Cog, Cloud } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { debugOverflow } from "@/utils/debugOverflow";
 
-const motdLines = [
-  "",
-  "                    NORTHSTAR CLOUD SOLUTIONS",
-  "",
-  "                                             .@@@@@@@@",
-  "                                      @@@@@@@@@@@@@@@@@@@@@@@@",
-  "                                 -@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-  "                              @@@@@@@@@@@@@@@-        +@@@@@@@@@@@@@@*",
-  "                            @@@@@@@@@@@                      @@@@@@@@@@@",
-  "                          @@@@@@@@@                              @@@@@@@@@",
-  "                        @@@@@@@@                                    @@@@@@@@",
-  "                      @@@@@@@@                                        @@@@@@@@",
-  "                     @@@@@@@                                     @      @@@@@@@",
-  "                   .@@@@@@                                    @@@@       :@@@@@@",
-  "                   @@@@@@                                 @@@@@@@          @@@@@@",
-  "                  @@@@@@                               @@@@@@@@@@           @@@@@@",
-  "                 @@@@@@                             @@@@@@@@@@@@             @@@@@@",
-  "                @@@@@@                          @@@@@@@@@@@@@@@               @@@@@",
-  "                @@@@@@                       @@@@@@@@@@@@@@@@@@               @@@@@@",
-  "               @@@@@@                     @@@@@@@@@@@@   @@@@@                 @@@@@",
-  "               @@@@@@                          -@@      @@@@@@                 @@@@@@",
-  "               @@@@@                                    @@@@@                   @@@@@",
-  "               @@@@@          @@@@@@@@@@@@@@@@         @@@@@@                   @@@@@",
-  "               @@@@@       @@@@@@@@@@@@@@@@@@@@@@      @@@@@                    @@@@@",
-  "               @@@@@     @@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                    @@@@@",
-  "               @@@@     @@@@@@@@            @@@@@@@@      @@                    @@@@@",
-  "               @@+    @@@@@@@                  @@@@@@@                         @@@@@@",
-  "               @@    @@@@@@@                    @@@@@@@                        @@@@@",
-  "               =@    @@@@@@                       @@@@@@@@@@@@@               @@@@@@",
-  "                    @@@@@@                        +@@@@@@@@@@@@@@@            @@@@@",
-  "                    @@@@@@                         @@@@@@@@@@@@@@@@@         @@@@@@",
-  "                    @@@@@@                         @@@@      @@@@@@@@       @@@@@@",
-  "                    @@@@@@                                      @@@@@@     @@@@@@",
-  "                     @@@@@@                                      @@@@@@  @@@@@@@",
-  "                      @@@@@@                                     @@@@@@ @@@@@@@",
-  "                       @@@@@@@                                   @@@@@@@@@@@@@",
-  "                        @@@@@@@@@                                @@@@@@@@@@@",
-  "                          @@@@@@@@@@                           @@@@@@@@@@@",
-  "                            @@@@@@@@@@@@                    @@@@@@@@@@@@",
-  "                               @@@@@@@@@@@@@@@@@=  :@@@@@@@@@@@@@@@@@",
-  "                                  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-  "                                      @@@@@@@@@@@@@@@@@@@@@@@@",
-  "                                               :@@@@#",
-  "",
-  "  PRODUCTS",
-  "  ──────────────────────────────────────────────────────────────────────────────",
-  "  • Nginx Proxy Manager ...................... [Available]",
-  "  • WordPress (Hardened Edition) ............ [Planned]",
-  "  • Wiki.js (Hardened Edition) .............. [Planned]",
-  "",
-  "  PRINCIPLES",
-  "  ──────────────────────────────────────────────────────────────────────────────",
-  "  ✓ Security .......... Defense-in-depth hardening from day one",
-  "  ✓ Backups .......... Atomic backups with S3 sync and rotation",
-  "  ✓ Logs .............. CloudWatch integration for full visibility",
-  "  ✓ Day-2 Ops ......... Automated operations, health monitoring",
-  "",
-  "  > explore /foundry • view docs",
-  "",
-];
 
 const keyBenefits = [
   {
@@ -140,10 +80,7 @@ export const Hero = () => {
           
           {/* Right Column - Terminal */}
           <div className="relative mt-8 lg:mt-0 w-full max-w-full min-w-0">
-            <TerminalSimulator 
-              lines={motdLines} 
-              typingSpeed={10}
-            />
+            <HeroTerminal />
           </div>
         </div>
 
