@@ -5,29 +5,6 @@ export const HeroTerminal = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Mini ASCII cloud logo (reduced size)
-  const miniAscii = [
-    "         .@@@@",
-    "    @@@@@@@@@@@@@@@@",
-    "  @@@@@@@@@@@@@@@@@@@@@@",
-    " @@@@@@@@      @@@@@@@@@",
-    "@@@@@@            @@@@@@",
-    "@@@@@              @@@@@",
-    "@@@@                @@@@",
-    "@@@                  @@@",
-    "@@@    @@@@@@@@     @@@",
-    "@@@  @@@@@@@@@@@@   @@@",
-    "@@@ @@@@@@@@@@@@@@  @@@",
-    "@@@ @@@@@    @@@@@  @@@",
-    "@@@  @@@      @@@   @@@",
-    "@@@   @@      @@    @@@",
-    "@@@@           @@@@@@@",
-    " @@@@@@       @@@@@@@",
-    "  @@@@@@@@@@@@@@@@@@",
-    "    @@@@@@@@@@@@@@",
-    "         @@@@",
-  ];
-
   return (
     <div className={cn(
       "bg-terminal rounded-lg border border-terminal-border font-mono text-sm w-full max-w-full"
@@ -45,7 +22,7 @@ export const HeroTerminal = () => {
       {/* Terminal Content - Scrollable container */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4 overflow-x-auto overflow-y-auto w-full max-w-full"
+        className="p-3 sm:p-4 overflow-x-auto overflow-y-auto w-full max-w-full terminal-scroll-content"
         style={{ 
           maxHeight: '380px',
           WebkitOverflowScrolling: 'touch',
@@ -57,19 +34,12 @@ export const HeroTerminal = () => {
         >
           {/* Command Line */}
           <div className="text-terminal-green mb-3 whitespace-nowrap" style={{ minWidth: 'max-content' }}>
-            <span className="text-terminal-muted">$</span> cat northstar.brand
+            <span className="text-terminal-muted">$</span> cat northstar-cloud-solutions.brand
           </div>
 
           {/* Brand Header */}
-          <div className="mb-2" style={{ minWidth: 'max-content' }}>
+          <div className="mb-4" style={{ minWidth: 'max-content' }}>
             <span className="text-cyan-400">NORTHSTAR CLOUD SOLUTIONS</span>
-          </div>
-
-          {/* Mini ASCII Logo */}
-          <div className="mb-4 text-terminal-muted" style={{ minWidth: 'max-content' }}>
-            {miniAscii.map((line, i) => (
-              <div key={i} className="whitespace-pre">{line}</div>
-            ))}
           </div>
 
           {/* PRODUCTS Section */}
@@ -120,13 +90,6 @@ export const HeroTerminal = () => {
               <span className="text-cyan-400">Day-2 Ops</span>
               <span className="text-terminal-text"> ......... Automated operations, health monitoring</span>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-4 text-terminal-muted whitespace-pre" style={{ minWidth: 'max-content' }}>
-            <span className="text-terminal-text">  </span>
-            <span className="text-cyan-400">&gt;</span>
-            <span className="text-terminal-text"> explore /foundry • view docs</span>
           </div>
         </div>
       </div>

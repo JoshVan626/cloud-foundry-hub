@@ -58,7 +58,7 @@ export const CodeSwitcher = ({ terraform, cloudformation, className }: CodeSwitc
       </div>
 
       {/* Code Content */}
-      <div className="bg-terminal p-3 sm:p-4 overflow-x-auto">
+      <div className="bg-terminal p-3 sm:p-4 overflow-x-auto terminal-scroll-content">
         <pre className="font-mono text-xs sm:text-sm text-terminal-text leading-relaxed whitespace-pre">
           <code className="block">{code}</code>
         </pre>

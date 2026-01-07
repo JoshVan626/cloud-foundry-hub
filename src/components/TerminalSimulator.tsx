@@ -92,7 +92,7 @@ export const TerminalSimulator = ({
       {/* Terminal Content - Scrollable container with proper containment */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4 overflow-x-auto overflow-y-auto w-full max-w-full"
+        className="p-3 sm:p-4 overflow-x-auto overflow-y-auto w-full max-w-full terminal-scroll-content"
         style={{ 
           height: `${fixedHeightMobile}px`,
           WebkitOverflowScrolling: 'touch',

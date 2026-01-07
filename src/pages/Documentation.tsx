@@ -233,7 +233,7 @@ const Documentation = () => {
             </div>
             
             {/* Code Content */}
-            <div className="p-3 sm:p-4 overflow-x-auto">
+            <div className="p-3 sm:p-4 overflow-x-auto terminal-scroll-content">
               <pre className="text-terminal-text whitespace-pre text-xs sm:text-sm">
                 {block.content?.split('\n').map((line, i) => (
                   <div key={i} className={cn(

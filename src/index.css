@@ -145,56 +145,36 @@
     @apply scroll-mt-24;
   }
 
-  /* Terminal scrollbar styling - hide on mobile, subtle on desktop */
-  .terminal-scroll-container {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--terminal-border)) transparent;
-  }
-
-  .terminal-scroll-container::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .terminal-scroll-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .terminal-scroll-container::-webkit-scrollbar-thumb {
-    background: hsl(var(--terminal-border));
-    border-radius: 3px;
-  }
-
-  .terminal-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--terminal-muted));
-  }
-
+  /* Terminal scrollbar styling - subtle and nearly invisible */
+  .terminal-scroll-container,
   .terminal-scroll-content {
     overflow-x: auto;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--terminal-border)) transparent;
+    scrollbar-color: hsl(var(--terminal-border) / 0.3) transparent;
   }
 
+  .terminal-scroll-container::-webkit-scrollbar,
   .terminal-scroll-content::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
+  .terminal-scroll-container::-webkit-scrollbar-track,
   .terminal-scroll-content::-webkit-scrollbar-track {
     background: transparent;
   }
 
+  .terminal-scroll-container::-webkit-scrollbar-thumb,
   .terminal-scroll-content::-webkit-scrollbar-thumb {
-    background: hsl(var(--terminal-border));
+    background: hsl(var(--terminal-border) / 0.3);
     border-radius: 3px;
   }
 
+  .terminal-scroll-container::-webkit-scrollbar-thumb:hover,
   .terminal-scroll-content::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--terminal-muted));
+    background: hsl(var(--terminal-border) / 0.5);
   }
 
   /* Hide scrollbars on mobile but keep functionality */
