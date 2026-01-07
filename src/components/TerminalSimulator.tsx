@@ -17,7 +17,7 @@ export const TerminalSimulator = ({
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLPreElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Reset scroll position on mount and when lines change
   useEffect(() => {
@@ -26,34 +26,6 @@ export const TerminalSimulator = ({
       containerRef.current.scrollLeft = 0;
     }
   }, [lines]);
-
-  // Pre-calculate FIXED height to prevent layout shift
-  const lineHeight = 1.4;
-  const basePadding = 24;
-  const commandLineHeight = 24;
-  const linesCount = lines.length;
-  const fixedHeightMobile = Math.min(280, basePadding + commandLineHeight + (linesCount * lineHeight * 16));
-  const fixedHeightDesktop = Math.min(380, basePadding + commandLineHeight + (linesCount * lineHeight * 18));
-
-  useEffect(() => {
-    const updateHeight = () => {
-      if (containerRef.current && contentRef.current) {
-        if (window.innerWidth >= 640) {
-          containerRef.current.style.height = `${fixedHeightDesktop}px`;
-          contentRef.current.style.height = `calc(${fixedHeightDesktop}px - 3rem)`;
-          contentRef.current.style.maxHeight = `calc(${fixedHeightDesktop}px - 3rem)`;
-        } else {
-          containerRef.current.style.height = `${fixedHeightMobile}px`;
-          contentRef.current.style.height = `calc(${fixedHeightMobile}px - 3rem)`;
-          contentRef.current.style.maxHeight = `calc(${fixedHeightMobile}px - 3rem)`;
-        }
-      }
-    };
-    
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
-  }, [fixedHeightMobile, fixedHeightDesktop]);
 
   useEffect(() => {
     if (currentLineIndex >= lines.length) {
@@ -97,39 +69,35 @@ export const TerminalSimulator = ({
         <span className="text-terminal-muted text-xs ml-2 truncate">northstar.cloud — first-boot</span>
       </div>
       
-      {/* Terminal Content - Scrollable container with proper containment */}
+      {/* Terminal Content - Scrollable container - match hero terminal exactly */}
       <div 
         ref={containerRef}
         className="p-3 sm:p-4 overflow-x-auto overflow-y-auto w-full max-w-full terminal-scroll-content"
         style={{ 
-          height: `${fixedHeightMobile}px`,
+          maxHeight: '380px',
           WebkitOverflowScrolling: 'touch',
         }}
         tabIndex={-1}
       >
-        <pre 
+        <div 
           ref={contentRef}
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono min-w-max"
-          style={{ 
-            height: `calc(${fixedHeightMobile}px - 3rem)`,
-            maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
+          className="text-terminal-text text-xs sm:text-sm font-mono"
+          style={{
             caretColor: 'transparent',
             userSelect: 'none'
           }}
         >
           {displayedLines.map((line, i) => (
-            <span key={i}>
-              {line || '\u00A0'}
-              {'\n'}
-            </span>
+            <div key={i} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+              <span className="text-terminal-text">{line || '\u00A0'}</span>
+            </div>
           ))}
           {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-            <span key={`placeholder-${i}`}>
-              {'\u00A0'}
-              {'\n'}
-            </span>
+            <div key={`placeholder-${i}`} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+              <span className="text-terminal-text">{'\u00A0'}</span>
+            </div>
           ))}
-        </pre>
+        </div>
       </div>
     </div>
   );

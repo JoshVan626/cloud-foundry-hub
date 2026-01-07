@@ -13,7 +13,7 @@ export const products: Product[] = [
   {
     id: "nginx-proxy-manager",
     name: "Nginx Proxy Manager – Hardened Edition",
-    shortName: "Nginx Proxy Manager",
+    shortName: "Nginx Proxy Manager (Hardened Edition)",
     description: "Enterprise-ready reverse proxy with automated SSL and security hardening",
   },
 ];
@@ -142,7 +142,7 @@ export const docContents: Record<string, DocContent> = {
     "content": [
       {
         "type": "paragraph",
-        "content": "Protecting your Nginx Proxy Manager data and TLS certificates is critical.\nThis AMI includes built-in backup and restore tooling."
+        "content": "Protecting your Nginx Proxy Manager (Hardened Edition) data and TLS certificates is critical.\nThis AMI includes built-in backup and restore tooling."
       },
       {
         "type": "heading",
@@ -1316,7 +1316,7 @@ export const docContents: Record<string, DocContent> = {
     "content": [
       {
         "type": "paragraph",
-        "content": "This guide walks you from **nothing** to a working Nginx Proxy Manager admin\npanel on AWS using the Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions."
+        "content": "This guide walks you from **nothing** to a working Nginx Proxy Manager (Hardened Edition) admin\npanel on AWS using the Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions."
       },
       {
         "type": "note",
@@ -1367,7 +1367,7 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "heading",
-        "content": "3. Log into Nginx Proxy Manager"
+        "content": "3. Log into Nginx Proxy Manager (Hardened Edition)"
       },
       {
         "type": "list",
@@ -2528,7 +2528,7 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "The base OS is a hardened Ubuntu 22.04 image.",
-          "Nginx Proxy Manager is pinned to a specific, tested Docker image tag.",
+          "Nginx Proxy Manager (Hardened Edition) is pinned to a specific, tested Docker image tag.",
           "You choose when to upgrade instead of things changing underneath you."
         ]
       },

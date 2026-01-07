@@ -23,7 +23,7 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Products</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/products/nginx-proxy-manager" className="hover:text-foreground transition-colors">Nginx Proxy Manager</Link></li>
+              <li><Link to="/products/nginx-proxy-manager" className="hover:text-foreground transition-colors">Nginx Proxy Manager (Hardened Edition)</Link></li>
               <li><Link to="/products/wordpress-hardened" className="hover:text-foreground transition-colors">WordPress (Hardened Edition)</Link></li>
               <li><Link to="/products/wikijs-hardened" className="hover:text-foreground transition-colors">Wiki.js (Hardened Edition)</Link></li>
             </ul>
@@ -50,12 +50,17 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-muted-foreground">
-          <span>© 2026 Northstar Cloud Solutions LLC. All rights reserved.</span>
-          <div className="flex gap-4">
-            <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
-            <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
+            <span>© 2026 Northstar Cloud Solutions LLC. All rights reserved.</span>
+            <div className="flex gap-4">
+              <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground/70 text-center sm:text-left">
+            Third-party trademarks and software belong to their respective owners.
+          </p>
         </div>
       </div>
     </footer>

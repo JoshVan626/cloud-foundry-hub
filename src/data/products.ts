@@ -32,9 +32,9 @@ export interface Product {
 export const products: Product[] = [
   {
     id: "nginx-proxy-manager",
-    name: "Nginx Proxy Manager",
+    name: "Nginx Proxy Manager (Hardened Edition)",
     tagline: "Enterprise-Ready Reverse Proxy",
-    description: "Production-hardened Nginx Proxy Manager with automated Day-2 operations, security hardening, and full observability. Deploy in minutes, operate with confidence.",
+    description: "Production-hardened Nginx Proxy Manager (Hardened Edition) with automated Day-2 operations, security hardening, and full observability. Deploy in minutes, operate with confidence.",
     category: "Networking",
     icon: "Shield",
     capabilities: ["Automated Ops", "Hardened", "AWS Native", "Observable"],

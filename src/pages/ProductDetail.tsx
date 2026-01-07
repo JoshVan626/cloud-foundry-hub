@@ -68,7 +68,7 @@ const ProductDetail = () => {
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to The Foundry
+            Home
           </Link>
         </div>
 

@@ -377,7 +377,7 @@ export const products: Product[] = [
   {
     id: "nginx-proxy-manager",
     name: "Nginx Proxy Manager – Hardened Edition",
-    shortName: "Nginx Proxy Manager",
+    shortName: "Nginx Proxy Manager (Hardened Edition)",
     description: "Enterprise-ready reverse proxy with automated SSL and security hardening",
   },
 ];

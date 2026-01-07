@@ -178,8 +178,8 @@ export const HeroTerminal = () => {
     if (line.includes("Resolving:")) {
       return (
         <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-          <span className="text-terminal-text">Resolving: Nginx Proxy Manager </span>
-          <span className="text-cyan-300">(Hardened Edition)</span>
+          <span className="text-terminal-text">Resolving: </span>
+          <span className="text-cyan-400">Nginx Proxy Manager (Hardened Edition)</span>
         </div>
       );
     }

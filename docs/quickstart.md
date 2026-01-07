@@ -9,7 +9,7 @@ order: 1
 
 # Quickstart
 
-This guide walks you from **nothing** to a working Nginx Proxy Manager admin
+This guide walks you from **nothing** to a working Nginx Proxy Manager (Hardened Edition) admin
 panel on AWS using the Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions.
 
 > Assumes: you’re familiar with launching EC2 instances and security groups.
@@ -60,7 +60,7 @@ Once the instance is running:
 
 ---
 
-## 3. Log into Nginx Proxy Manager
+## 3. Log into Nginx Proxy Manager (Hardened Edition)
 
 1. Open your browser to:
 
