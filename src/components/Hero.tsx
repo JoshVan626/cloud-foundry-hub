@@ -11,8 +11,14 @@ const motdLines = [
   "║  Version: 2.13.5-hardened                                    ║",
   "║  Status: INITIALIZED ✓                                       ║",
   "╠══════════════════════════════════════════════════════════════╣",
-  "║  Production-ready reverse proxy with automated operations    ║",
-  "║  Security hardened • CloudWatch integrated • S3 backups      ║",
+  "║  ONBOARDING CHECKLIST                                        ║",
+  "║  ────────────────────────────────────────────────────────────║",
+  "║  [1] Retrieve admin credentials:                             ║",
+  "║      sudo cat /root/npm-admin-credentials.txt                ║",
+  "║  [2] Access the Admin Panel:                                 ║",
+  "║      https://<your-ip>:81                                    ║",
+  "║  [3] Configure your first proxy host                         ║",
+  "║  [4] Run 'npm-helper status' to verify health                ║",
   "╚══════════════════════════════════════════════════════════════╝",
 ];
 
