@@ -4,9 +4,17 @@ import { cn } from "@/lib/utils";
 export const HeroTerminal = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll position on mount
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+      containerRef.current.scrollLeft = 0;
+    }
+  }, []);
   const [commandText, setCommandText] = useState("");
   const [visibleOutputLines, setVisibleOutputLines] = useState<number>(0);
-  const [showCursor, setShowCursor] = useState(true);
+  const [cursorOpacity, setCursorOpacity] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [stopBlinking, setStopBlinking] = useState(false);
@@ -42,22 +50,27 @@ export const HeroTerminal = () => {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Cursor blink animation - stop after 6 seconds
+  // Cursor blink animation - use opacity, stop after completion
   useEffect(() => {
     if (prefersReducedMotion || stopBlinking) {
-      setShowCursor(true); // Keep cursor visible but static
+      setCursorOpacity(1); // Keep cursor visible but static
       return;
     }
 
-    if (!isComplete) return;
+    if (!isComplete) {
+      // During typing, cursor is always visible (opacity 1)
+      setCursorOpacity(1);
+      return;
+    }
 
-    // Stop blinking after 6 seconds
+    // After completion, blink for 6 seconds then stop
     const stopTimer = setTimeout(() => {
       setStopBlinking(true);
+      setCursorOpacity(1); // Keep visible but static
     }, 6000);
 
     const interval = setInterval(() => {
-      setShowCursor(prev => !prev);
+      setCursorOpacity(prev => prev === 1 ? 0.3 : 1);
     }, 530); // ~530ms blink rate
 
     return () => {
@@ -73,7 +86,8 @@ export const HeroTerminal = () => {
       setCommandText(fullCommand);
       setVisibleOutputLines(outputLines.length);
       setIsComplete(true);
-      setShowCursor(true);
+      setCursorOpacity(1);
+      setStopBlinking(true); // Don't blink if reduced motion
       return;
     }
 
@@ -94,7 +108,7 @@ export const HeroTerminal = () => {
         // Command finished, wait 350-600ms then start output
         const waitTime = 350 + Math.random() * 250; // 350-600ms
         const timer = setTimeout(() => {
-          setShowCursor(false); // Hide cursor during output
+          setCursorOpacity(0); // Hide cursor during output (using opacity)
           printOutput();
         }, waitTime);
         commandTimers.push(timer);
@@ -120,7 +134,7 @@ export const HeroTerminal = () => {
       } else {
         // All output printed, show cursor at end
         setIsComplete(true);
-        setShowCursor(true);
+        setCursorOpacity(1); // Show cursor (will blink via useEffect)
       }
     };
 
@@ -238,19 +252,19 @@ export const HeroTerminal = () => {
             {commandParts.rest && (
               <span className="text-terminal-text">{commandParts.rest}</span>
             )}
-            {/* Show cursor only during typing (before output starts) */}
-            {!isComplete && visibleOutputLines === 0 && showCursor && (
-              <span className={`inline-block ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`} style={{ color: 'hsl(var(--terminal-cursor))' }}>▍</span>
+            {/* Cursor during typing - always mounted, opacity controlled */}
+            {!isComplete && visibleOutputLines === 0 && (
+              <span className="inline-block ml-0.5" style={{ color: 'hsl(var(--terminal-cursor))', opacity: cursorOpacity }}>▍</span>
             )}
           </div>
 
           {/* Output lines */}
           {outputLines.slice(0, visibleOutputLines).map((line, index) => renderOutputLine(line, index))}
 
-          {/* Final cursor after completion - only one cursor, only if not showing typing cursor */}
-          {isComplete && showCursor && visibleOutputLines > 0 && (
+          {/* Final cursor after completion - always mounted, opacity controlled */}
+          {isComplete && visibleOutputLines > 0 && (
             <div className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-              <span className={`inline-block ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`} style={{ color: 'hsl(var(--terminal-cursor))' }}>▍</span>
+              <span className="inline-block ml-0.5" style={{ color: 'hsl(var(--terminal-cursor))', opacity: cursorOpacity }}>▍</span>
             </div>
           )}
         </div>

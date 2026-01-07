@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { getProductById } from "@/data/products";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -31,7 +32,13 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
   const product = getProductById(id || "");
+
+  // Reset scroll position on mount and when product changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [id, location.pathname]);
 
   if (!product) {
     return (
@@ -220,12 +227,14 @@ const ProductDetail = () => {
 
         {/* MOTD Terminal */}
         {product.motd.length > 0 && (
-          <section className="container mx-auto px-4">
+          <section className="container mx-auto px-4 max-w-4xl">
             <h2 className="text-2xl font-bold text-foreground mb-2">First-Boot Experience</h2>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground mb-6">
               This is what you'll see when you first SSH into your hardened instance.
             </p>
-            <TerminalSimulator lines={product.motd} typingSpeed={10} />
+            <div className="w-full">
+              <TerminalSimulator lines={product.motd} typingSpeed={10} />
+            </div>
           </section>
         )}
       </main>

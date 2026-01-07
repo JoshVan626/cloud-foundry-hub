@@ -386,33 +386,42 @@ const Documentation = () => {
 
         {/* Mobile Bottom Sheet - Only on small screens */}
         <aside className={cn(
-          "lg:hidden fixed bottom-0 left-0 right-0 max-h-[85vh] rounded-t-xl border-t border-border bg-muted/30 overflow-y-auto z-40 transition-transform duration-300 ease-out",
+          "lg:hidden fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-xl border-t border-border bg-muted/30 z-40 transition-transform duration-300 ease-out flex flex-col",
           mobileMenuOpen ? "translate-y-0" : "translate-y-full"
         )}
         style={{
+          paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))'
         }}>
-          <div className="p-4 sm:p-6">
-            {/* Close button for mobile bottom sheet */}
-            <div className="flex justify-between items-center mb-4 pb-4 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground">Documentation</h2>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg hover:bg-muted transition-colors text-foreground"
-                aria-label="Close docs menu"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+          {/* Sticky Header with Close Button */}
+          <div className="sticky top-0 z-50 bg-muted/30 backdrop-blur-sm border-b border-border px-4 py-3 flex justify-between items-center flex-shrink-0">
+            <h2 className="text-lg font-semibold text-foreground">Documentation</h2>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-lg hover:bg-muted transition-colors text-foreground flex-shrink-0"
+              aria-label="Close docs menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          {/* Scrollable Content Area */}
+          <div className="flex-1 overflow-y-auto terminal-scroll-content">
             <SidebarContent />
           </div>
         </aside>
 
-        {/* Overlay for mobile */}
+        {/* Overlay for mobile - clickable backdrop */}
         {mobileMenuOpen && (
           <div 
             className="lg:hidden fixed inset-0 bg-background/80 backdrop-blur-sm z-30"
             onClick={() => setMobileMenuOpen(false)}
+            onTouchStart={(e) => {
+              // Close on swipe down gesture
+              if (e.touches[0].clientY > window.innerHeight * 0.1) {
+                setMobileMenuOpen(false);
+              }
+            }}
           />
         )}
 

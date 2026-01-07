@@ -19,6 +19,14 @@ export const TerminalSimulator = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLPreElement>(null);
 
+  // Reset scroll position on mount and when lines change
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+      containerRef.current.scrollLeft = 0;
+    }
+  }, [lines]);
+
   // Pre-calculate FIXED height to prevent layout shift
   const lineHeight = 1.4;
   const basePadding = 24;
@@ -86,7 +94,7 @@ export const TerminalSimulator = ({
           <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
           <div className="w-3 h-3 rounded-full bg-green-500/80" />
         </div>
-        <span className="text-terminal-muted text-xs ml-2 truncate">northstar.cloud — brand</span>
+        <span className="text-terminal-muted text-xs ml-2 truncate">northstar.cloud — first-boot</span>
       </div>
       
       {/* Terminal Content - Scrollable container with proper containment */}
@@ -97,6 +105,7 @@ export const TerminalSimulator = ({
           height: `${fixedHeightMobile}px`,
           WebkitOverflowScrolling: 'touch',
         }}
+        tabIndex={-1}
       >
         <pre 
           ref={contentRef}
@@ -104,6 +113,8 @@ export const TerminalSimulator = ({
           style={{ 
             height: `calc(${fixedHeightMobile}px - 3rem)`,
             maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
+            caretColor: 'transparent',
+            userSelect: 'none'
           }}
         >
           {displayedLines.map((line, i) => (

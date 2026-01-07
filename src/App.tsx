@@ -14,11 +14,19 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Track page views for React Router (SPA)
+// Track page views and handle scroll restoration for React Router (SPA)
 const PageViewTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Disable browser scroll restoration
+    if (typeof window !== "undefined" && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    // Scroll to top on route change
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
     // Track page view when route changes
     if (typeof window !== "undefined" && (window as any).gtag) {
       (window as any).gtag("config", "G-6KQVDBN1NE", {
