@@ -20,15 +20,13 @@ export const TerminalSimulator = ({
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Pre-calculate FIXED height to prevent layout shift
-  // Use fixed height based on line count - this prevents page jumping
-  const lineHeight = 1.4; // em units for terminal lines
-  const basePadding = 24; // padding top + bottom
-  const commandLineHeight = 24; // space for command line
+  const lineHeight = 1.4;
+  const basePadding = 24;
+  const commandLineHeight = 24;
   const linesCount = lines.length;
   const fixedHeightMobile = Math.min(280, basePadding + commandLineHeight + (linesCount * lineHeight * 16));
   const fixedHeightDesktop = Math.min(380, basePadding + commandLineHeight + (linesCount * lineHeight * 18));
 
-  // Set responsive height on mount and resize
   useEffect(() => {
     const updateHeight = () => {
       if (containerRef.current && contentRef.current) {
@@ -78,7 +76,7 @@ export const TerminalSimulator = ({
 
   return (
     <div className={cn(
-      "bg-terminal rounded-lg border border-terminal-border overflow-hidden font-mono text-sm",
+      "bg-terminal rounded-lg border border-terminal-border font-mono text-sm",
       className
     )}>
       {/* Terminal Header */}
@@ -91,37 +89,39 @@ export const TerminalSimulator = ({
         <span className="text-terminal-muted text-xs ml-2 truncate">northstar-npm-01 — bash</span>
       </div>
       
-      {/* Terminal Content - FIXED height to prevent layout shift and page jumping */}
+      {/* Terminal Content - Scrollable container */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden terminal-scroll-container"
+        className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden"
         style={{ 
           height: `${fixedHeightMobile}px`,
+          WebkitOverflowScrolling: 'touch',
         }}
       >
-        <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap flex-shrink-0" style={{ minWidth: 'max-content' }}>
-          <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
-        </div>
-        <div 
-          ref={contentRef}
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono overflow-x-auto overflow-y-auto terminal-scroll-content"
-          style={{ 
-            height: `calc(${fixedHeightMobile}px - 3rem)`,
-            maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
-            minWidth: 'max-content',
-          }}
-        >
-          {displayedLines.map((line, i) => (
-            <div key={i} className="terminal-line whitespace-pre" style={{ minWidth: 'max-content' }}>
-              {line || '\u00A0'}
-            </div>
-          ))}
-          {/* Reserve space for remaining lines to prevent height changes */}
-          {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-            <div key={`placeholder-${i}`} className="terminal-line whitespace-pre" style={{ minWidth: 'max-content' }}>
-              {'\u00A0'}
-            </div>
-          ))}
+        <div style={{ minWidth: 'max-content' }}>
+          <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap">
+            <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
+          </div>
+          <div 
+            ref={contentRef}
+            className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono"
+            style={{ 
+              height: `calc(${fixedHeightMobile}px - 3rem)`,
+              maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
+              minWidth: 'max-content',
+            }}
+          >
+            {displayedLines.map((line, i) => (
+              <div key={i} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+                {line || '\u00A0'}
+              </div>
+            ))}
+            {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
+              <div key={`placeholder-${i}`} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
+                {'\u00A0'}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

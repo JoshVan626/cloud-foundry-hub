@@ -42,7 +42,7 @@ const keyBenefits = [
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center py-12 sm:py-16 md:py-20">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
