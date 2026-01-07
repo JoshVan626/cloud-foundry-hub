@@ -86,11 +86,9 @@ export const Hero = () => {
           
           {/* Right Column - Terminal */}
           <div className="relative mt-8 lg:mt-0">
-            <div className="absolute -inset-2 sm:-inset-4 bg-accent/5 rounded-xl blur-xl pointer-events-none" />
             <TerminalSimulator 
               lines={motdLines} 
-              typingSpeed={15}
-              className="relative shadow-2xl"
+              typingSpeed={10}
             />
           </div>
         </div>
