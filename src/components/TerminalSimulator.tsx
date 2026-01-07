@@ -94,11 +94,9 @@ export const TerminalSimulator = ({
       {/* Terminal Content - FIXED height to prevent layout shift and page jumping */}
       <div 
         ref={containerRef}
-        className="p-3 sm:p-4"
+        className="p-3 sm:p-4 terminal-scroll-container"
         style={{ 
           height: `${fixedHeightMobile}px`,
-          overflowX: 'auto',
-          overflowY: 'hidden',
         }}
       >
         <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap flex-shrink-0" style={{ minWidth: 'max-content' }}>
@@ -106,29 +104,24 @@ export const TerminalSimulator = ({
         </div>
         <div 
           ref={contentRef}
-          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono"
+          className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm font-mono terminal-scroll-content"
           style={{ 
             height: `calc(${fixedHeightMobile}px - 3rem)`,
             maxHeight: `calc(${fixedHeightMobile}px - 3rem)`,
-            overflowY: 'auto',
-            overflowX: 'auto',
             minWidth: 'max-content',
           }}
         >
           {displayedLines.map((line, i) => (
-            <div key={i} className="terminal-line whitespace-pre min-w-max">
+            <div key={i} className="terminal-line whitespace-pre" style={{ minWidth: 'max-content' }}>
               {line || '\u00A0'}
             </div>
           ))}
           {/* Reserve space for remaining lines to prevent height changes */}
           {!isComplete && Array.from({ length: lines.length - displayedLines.length }).map((_, i) => (
-            <div key={`placeholder-${i}`} className="terminal-line whitespace-pre min-w-max">
+            <div key={`placeholder-${i}`} className="terminal-line whitespace-pre" style={{ minWidth: 'max-content' }}>
               {'\u00A0'}
             </div>
           ))}
-          {!isComplete && (
-            <span className="inline-block w-2 h-4 bg-terminal-cursor animate-pulse ml-0.5" />
-          )}
         </div>
       </div>
     </div>
