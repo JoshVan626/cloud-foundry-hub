@@ -9,6 +9,7 @@ export const HeroTerminal = () => {
   const [showCursor, setShowCursor] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [stopBlinking, setStopBlinking] = useState(false);
 
   const command = "northstar-cloud deploy npm --hardened";
   const fullCommand = `$ ${command}`;
@@ -41,16 +42,29 @@ export const HeroTerminal = () => {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Cursor blink animation
+  // Cursor blink animation - stop after 6 seconds
   useEffect(() => {
-    if (prefersReducedMotion || isComplete) return;
+    if (prefersReducedMotion || stopBlinking) {
+      setShowCursor(true); // Keep cursor visible but static
+      return;
+    }
+
+    if (!isComplete) return;
+
+    // Stop blinking after 6 seconds
+    const stopTimer = setTimeout(() => {
+      setStopBlinking(true);
+    }, 6000);
 
     const interval = setInterval(() => {
       setShowCursor(prev => !prev);
     }, 530); // ~530ms blink rate
 
-    return () => clearInterval(interval);
-  }, [prefersReducedMotion, isComplete]);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(stopTimer);
+    };
+  }, [prefersReducedMotion, isComplete, stopBlinking]);
 
   // Terminal typing animation
   useEffect(() => {
@@ -69,7 +83,7 @@ export const HeroTerminal = () => {
 
     const typeCommand = () => {
       if (charIndex < fullCommand.length) {
-        const typingSpeed = 25 + Math.random() * 20; // 25-45ms per character
+        const typingSpeed = 45 + Math.random() * 25; // 45-70ms per character
         const timer = setTimeout(() => {
           setCommandText(fullCommand.slice(0, charIndex + 1));
           charIndex++;
@@ -77,8 +91,8 @@ export const HeroTerminal = () => {
         }, typingSpeed);
         commandTimers.push(timer);
       } else {
-        // Command finished, wait 250-400ms then start output
-        const waitTime = 250 + Math.random() * 150; // 250-400ms
+        // Command finished, wait 350-600ms then start output
+        const waitTime = 350 + Math.random() * 250; // 350-600ms
         const timer = setTimeout(() => {
           setShowCursor(false); // Hide cursor during output
           printOutput();
@@ -94,8 +108,8 @@ export const HeroTerminal = () => {
         // Check if this is a step line (1/4, 2/4, etc.) for extra delay
         const isStepLine = outputLines[outputIndex].includes("[ ");
         const delay = isStepLine 
-          ? 150 + Math.random() * 130 // 150-280ms for step lines
-          : 50 + Math.random() * 50; // 50-100ms for other lines
+          ? 350 + Math.random() * 200 // 350-550ms for step lines
+          : 250 + Math.random() * 200; // 250-450ms for other lines
 
         const timer = setTimeout(() => {
           setVisibleOutputLines(outputIndex + 1);
@@ -219,18 +233,19 @@ export const HeroTerminal = () => {
             {commandParts.rest && (
               <span className="text-terminal-text">{commandParts.rest}</span>
             )}
-            {!isComplete && showCursor && (
-              <span className="inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 animate-pulse">▍</span>
+            {/* Show cursor only during typing (before output starts) */}
+            {!isComplete && visibleOutputLines === 0 && showCursor && (
+              <span className={`inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`}>▍</span>
             )}
           </div>
 
           {/* Output lines */}
           {outputLines.slice(0, visibleOutputLines).map((line, index) => renderOutputLine(line, index))}
 
-          {/* Final cursor after completion */}
-          {isComplete && showCursor && (
+          {/* Final cursor after completion - only one cursor, only if not showing typing cursor */}
+          {isComplete && showCursor && visibleOutputLines > 0 && (
             <div className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-              <span className="inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 animate-pulse">▍</span>
+              <span className={`inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`}>▍</span>
             </div>
           )}
         </div>

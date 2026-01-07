@@ -45,7 +45,7 @@ export const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center w-full max-w-full">
           {/* Left Column - Content */}
           <div className="space-y-6 sm:space-y-8 w-full min-w-0">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 flex-wrap">
+            <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 flex-wrap">
               <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
               <span className="text-sm font-medium text-accent break-words">Cloud Solutions Foundry</span>
             </div>

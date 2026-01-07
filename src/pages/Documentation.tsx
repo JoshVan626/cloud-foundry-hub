@@ -310,26 +310,37 @@ const Documentation = () => {
         className="lg:hidden fixed top-20 right-4 z-50 px-3 py-2 rounded-lg bg-card border border-border shadow-lg hover:bg-muted transition-colors text-sm font-medium text-foreground flex items-center gap-2"
         aria-label={mobileMenuOpen ? "Close docs menu" : "Open docs menu"}
       >
-        {mobileMenuOpen ? (
-          <>
-            <X className="w-4 h-4" />
-            <span>Close</span>
-          </>
-        ) : (
-          <>
-            <BookOpen className="w-4 h-4" />
-            <span>Docs Menu</span>
-          </>
-        )}
+        <BookOpen className="w-4 h-4" />
+        <span>Docs Menu</span>
       </button>
       
       <div className="pt-16 flex">
-        {/* Sidebar */}
+        {/* Sidebar - Bottom sheet on mobile, sidebar on desktop */}
         <aside className={cn(
-          "w-72 fixed left-0 top-16 bottom-0 border-r border-border bg-muted/30 overflow-y-auto z-40 transition-transform duration-200 ease-in-out",
-          mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        )}>
+          // Mobile: bottom sheet
+          "lg:hidden fixed bottom-0 left-0 right-0 max-h-[85vh] rounded-t-xl border-t border-border bg-muted/30 overflow-y-auto z-40 transition-transform duration-300 ease-out",
+          // Desktop: sidebar
+          "lg:w-72 lg:fixed lg:left-0 lg:top-16 lg:bottom-0 lg:border-r lg:rounded-none lg:max-h-none",
+          // Mobile transition
+          mobileMenuOpen ? "translate-y-0" : "translate-y-full",
+          // Desktop always visible
+          "lg:translate-y-0 lg:translate-x-0"
+        )}
+        style={{
+          paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))'
+        }}>
           <div className="p-4 sm:p-6">
+            {/* Close button for mobile bottom sheet */}
+            <div className="lg:hidden flex justify-between items-center mb-4 pb-4 border-b border-border">
+              <h2 className="text-lg font-semibold text-foreground">Documentation</h2>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-lg hover:bg-muted transition-colors text-foreground"
+                aria-label="Close docs menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
             {/* Product Selector */}
             <div className="mb-6">
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
