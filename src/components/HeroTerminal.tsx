@@ -219,10 +219,15 @@ export const HeroTerminal = () => {
           maxHeight: '380px',
           WebkitOverflowScrolling: 'touch',
         }}
+        tabIndex={-1}
       >
         <div 
           ref={contentRef}
           className="text-terminal-text text-xs sm:text-sm font-mono"
+          style={{
+            caretColor: 'transparent',
+            userSelect: 'none'
+          }}
         >
           {/* Command line with typing animation */}
           <div className="whitespace-pre mb-1" style={{ minWidth: 'max-content' }}>
@@ -235,7 +240,7 @@ export const HeroTerminal = () => {
             )}
             {/* Show cursor only during typing (before output starts) */}
             {!isComplete && visibleOutputLines === 0 && showCursor && (
-              <span className={`inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`}>▍</span>
+              <span className={`inline-block ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`} style={{ color: 'hsl(var(--terminal-cursor))' }}>▍</span>
             )}
           </div>
 
@@ -245,7 +250,7 @@ export const HeroTerminal = () => {
           {/* Final cursor after completion - only one cursor, only if not showing typing cursor */}
           {isComplete && showCursor && visibleOutputLines > 0 && (
             <div className="whitespace-pre" style={{ minWidth: 'max-content' }}>
-              <span className={`inline-block w-0.5 h-4 bg-terminal-cursor ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`}>▍</span>
+              <span className={`inline-block ml-0.5 ${stopBlinking ? '' : 'animate-pulse'}`} style={{ color: 'hsl(var(--terminal-cursor))' }}>▍</span>
             </div>
           )}
         </div>

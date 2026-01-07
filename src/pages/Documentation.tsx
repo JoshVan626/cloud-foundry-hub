@@ -300,38 +300,101 @@ const Documentation = () => {
     }
   };
 
+  // Shared sidebar content component
+  const SidebarContent = () => (
+    <div className="p-4 sm:p-6">
+      {/* Product Selector */}
+      <div className="mb-6">
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
+          Product
+        </label>
+        <Select value={selectedProductId} onValueChange={handleProductChange}>
+          <SelectTrigger className="w-full bg-background border-border">
+            <div className="flex items-center gap-2">
+              <Package className="w-4 h-4 text-accent" />
+              <SelectValue placeholder="Select product" />
+            </div>
+          </SelectTrigger>
+          <SelectContent className="bg-popover border-border">
+            {products.map((product) => (
+              <SelectItem key={product.id} value={product.id}>
+                {product.shortName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search docs..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+        />
+      </div>
+
+      {/* Nav Items */}
+      <nav className="space-y-4 sm:space-y-6">
+        {filteredSections.map((section) => {
+          const IconComponent = iconMap[section.icon] || Rocket;
+          return (
+            <div key={section.id}>
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
+                <IconComponent className="w-4 h-4 text-accent" />
+                {section.title}
+              </div>
+              <ul className="space-y-1 ml-4 sm:ml-6">
+                {section.items.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => {
+                        handleNavClick(item.id);
+                        setMobileMenuOpen(false); // Close mobile menu on click
+                      }}
+                      className={cn(
+                        "block w-full text-left text-sm py-2 px-3 rounded-md transition-colors break-words",
+                        activeDocId === item.id
+                          ? "bg-accent/10 text-accent font-medium"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      )}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </nav>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Mobile docs menu button - positioned to avoid confusion with navbar menu */}
-      <button
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="lg:hidden fixed top-20 right-4 z-50 px-3 py-2 rounded-lg bg-card border border-border shadow-lg hover:bg-muted transition-colors text-sm font-medium text-foreground flex items-center gap-2"
-        aria-label={mobileMenuOpen ? "Close docs menu" : "Open docs menu"}
-      >
-        <BookOpen className="w-4 h-4" />
-        <span>Docs Menu</span>
-      </button>
-      
       <div className="pt-16 flex">
-        {/* Sidebar - Bottom sheet on mobile, sidebar on desktop */}
+        {/* Desktop Sidebar - Always visible on lg+ */}
+        <aside className="hidden lg:block w-72 fixed left-0 top-16 bottom-0 border-r border-border bg-muted/30 overflow-y-auto z-40">
+          <SidebarContent />
+        </aside>
+
+        {/* Mobile Bottom Sheet - Only on small screens */}
         <aside className={cn(
-          // Mobile: bottom sheet
           "lg:hidden fixed bottom-0 left-0 right-0 max-h-[85vh] rounded-t-xl border-t border-border bg-muted/30 overflow-y-auto z-40 transition-transform duration-300 ease-out",
-          // Desktop: sidebar
-          "lg:w-72 lg:fixed lg:left-0 lg:top-16 lg:bottom-0 lg:border-r lg:rounded-none lg:max-h-none",
-          // Mobile transition
-          mobileMenuOpen ? "translate-y-0" : "translate-y-full",
-          // Desktop always visible
-          "lg:translate-y-0 lg:translate-x-0"
+          mobileMenuOpen ? "translate-y-0" : "translate-y-full"
         )}
         style={{
           paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))'
         }}>
           <div className="p-4 sm:p-6">
             {/* Close button for mobile bottom sheet */}
-            <div className="lg:hidden flex justify-between items-center mb-4 pb-4 border-b border-border">
+            <div className="flex justify-between items-center mb-4 pb-4 border-b border-border">
               <h2 className="text-lg font-semibold text-foreground">Documentation</h2>
               <button
                 onClick={() => setMobileMenuOpen(false)}
@@ -341,71 +404,7 @@ const Documentation = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            {/* Product Selector */}
-            <div className="mb-6">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
-                Product
-              </label>
-              <Select value={selectedProductId} onValueChange={handleProductChange}>
-                <SelectTrigger className="w-full bg-background border-border">
-                  <div className="flex items-center gap-2">
-                    <Package className="w-4 h-4 text-accent" />
-                    <SelectValue placeholder="Select product" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="bg-popover border-border">
-                  {products.map((product) => (
-                    <SelectItem key={product.id} value={product.id}>
-                      {product.shortName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Search */}
-            <div className="relative mb-6">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search docs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-              />
-            </div>
-
-            {/* Nav Items */}
-            <nav className="space-y-4 sm:space-y-6">
-              {filteredSections.map((section) => {
-                const IconComponent = iconMap[section.icon] || Rocket;
-                return (
-                  <div key={section.id}>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-                      <IconComponent className="w-4 h-4 text-accent" />
-                      {section.title}
-                    </div>
-                    <ul className="space-y-1 ml-4 sm:ml-6">
-                      {section.items.map((item) => (
-                        <li key={item.id}>
-                          <button
-                            onClick={() => handleNavClick(item.id)}
-                            className={cn(
-                              "block w-full text-left text-sm py-2 px-3 rounded-md transition-colors break-words",
-                              activeDocId === item.id
-                                ? "bg-accent/10 text-accent font-medium"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                            )}
-                          >
-                            {item.label}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </nav>
+            <SidebarContent />
           </div>
         </aside>
 
@@ -420,16 +419,28 @@ const Documentation = () => {
         {/* Main Content */}
         <main className="flex-1 lg:ml-72 p-4 sm:p-6 lg:p-10 min-h-[calc(100vh-4rem)] overflow-x-hidden">
           <div className="max-w-3xl mx-auto w-full">
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 flex-wrap overflow-x-auto">
-              <BookOpen className="w-4 h-4" />
-              <span>Docs</span>
-              <ChevronRight className="w-4 h-4" />
-              <span>{breadcrumb.product}</span>
-              <ChevronRight className="w-4 h-4" />
-              <span>{breadcrumb.section}</span>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-foreground">{breadcrumb.item}</span>
+            {/* Breadcrumb with mobile docs menu button */}
+            <div className="flex items-center justify-between gap-2 mb-6 sm:mb-8">
+              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground flex-wrap overflow-x-auto">
+                <BookOpen className="w-4 h-4" />
+                <span>Docs</span>
+                <ChevronRight className="w-4 h-4" />
+                <span>{breadcrumb.product}</span>
+                <ChevronRight className="w-4 h-4" />
+                <span>{breadcrumb.section}</span>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-foreground">{breadcrumb.item}</span>
+              </div>
+              {/* Mobile docs menu button - in normal flow, not fixed */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden px-3 py-2 rounded-lg bg-card border border-border shadow-sm hover:bg-muted transition-colors text-sm font-medium text-foreground flex items-center gap-2 flex-shrink-0"
+                aria-label={mobileMenuOpen ? "Close docs menu" : "Open docs menu"}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span className="hidden sm:inline">Docs Menu</span>
+                <span className="sm:hidden">Menu</span>
+              </button>
             </div>
 
             {/* Content */}
