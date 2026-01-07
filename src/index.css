@@ -122,6 +122,8 @@
   .terminal-line {
     @apply block;
     min-height: 1.4em;
+    white-space: pre;
+    min-width: max-content;
   }
 
   /* Prose styling for documentation */

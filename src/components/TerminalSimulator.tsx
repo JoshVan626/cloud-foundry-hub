@@ -59,14 +59,14 @@ export const TerminalSimulator = ({
         <span className="text-terminal-muted text-xs ml-2 truncate">northstar-npm-01 — bash</span>
       </div>
       
-      {/* Terminal Content */}
-      <div className="p-3 sm:p-4 overflow-x-auto">
-        <div className="text-terminal-green mb-2 text-xs sm:text-sm">
+      {/* Terminal Content - Enable horizontal scrolling */}
+      <div className="p-3 sm:p-4 overflow-x-auto overflow-y-hidden terminal-scroll-container">
+        <div className="text-terminal-green mb-2 text-xs sm:text-sm whitespace-nowrap">
           <span className="text-terminal-muted">$</span> ssh admin@npm-hardened.northstar.cloud
         </div>
         <div className="text-terminal-text whitespace-pre leading-relaxed text-xs sm:text-sm min-h-[200px] sm:min-h-[300px]">
           {displayedLines.map((line, i) => (
-            <div key={i} className="terminal-line">
+            <div key={i} className="terminal-line whitespace-pre" style={{ minWidth: 'max-content' }}>
               {line || '\u00A0'}
             </div>
           ))}
