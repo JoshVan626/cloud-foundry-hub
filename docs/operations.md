@@ -1,12 +1,3 @@
----
-id: operations
-title: Operations
-description: "Understanding the first-boot lifecycle, CLI tools, and day-to-day operations for the Nginx Proxy Manager – Hardened Edition."
-product: nginx-proxy-manager
-section: operations
-order: 1
----
-
 # Operations
 
 This AMI includes a few opinionated tools and services to make NPM easier to

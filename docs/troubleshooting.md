@@ -1,12 +1,3 @@
----
-id: troubleshooting
-title: Troubleshooting
-description: "Common issues and how to debug them for the Nginx Proxy Manager – Hardened Edition."
-product: nginx-proxy-manager
-section: operations
-order: 2
----
-
 # Troubleshooting
 
 Common issues and how to debug them.
