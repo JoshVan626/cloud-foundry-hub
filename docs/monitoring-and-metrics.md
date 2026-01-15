@@ -1,12 +1,3 @@
----
-id: monitoring
-title: Monitoring & Metrics
-description: "CloudWatch integration for comprehensive observability of your Nginx Proxy Manager – Hardened Edition – optional but pre-configured."
-product: nginx-proxy-manager
-section: monitoring
-order: 1
----
-
 # Monitoring & Metrics
 
 This AMI includes a preconfigured Amazon CloudWatch Agent so basic logs and

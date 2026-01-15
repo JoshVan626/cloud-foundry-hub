@@ -1,15 +1,6 @@
----
-id: backup-restore
-title: Backup & Restore
-description: "Protecting your Nginx Proxy Manager – Hardened Edition data and TLS certificates with built-in backup and restore tooling."
-product: nginx-proxy-manager
-section: backup
-order: 1
----
-
 # Backup & Restore
 
-Protecting your Nginx Proxy Manager (Hardened Edition) data and TLS certificates is critical.
+Protecting your Nginx Proxy Manager data and TLS certificates is critical.
 This AMI includes built-in backup and restore tooling.
 
 ---

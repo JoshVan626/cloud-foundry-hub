@@ -1,12 +1,3 @@
----
-id: multi-app
-title: Multi-App Setup
-description: "A common use case: run multiple applications behind a single Nginx Proxy Manager – Hardened Edition instance on EC2."
-product: nginx-proxy-manager
-section: getting-started
-order: 2
----
-
 # Example: Hosting Multiple Apps Behind NPM
 
 A common use case is to run multiple applications behind a single NPM instance

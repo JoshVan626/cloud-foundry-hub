@@ -1,12 +1,3 @@
----
-id: security-hardening
-title: Security & Hardening
-description: "The Nginx Proxy Manager – Hardened Edition AMI ships with a conservative security baseline applied out of the box."
-product: nginx-proxy-manager
-section: security
-order: 1
----
-
 # Security & Hardening
 
 This AMI ships with a conservative security baseline applied out of the box.
