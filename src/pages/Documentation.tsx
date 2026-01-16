@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { 
@@ -41,11 +42,18 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const Documentation = () => {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeDocId, setActiveDocId] = useState("quickstart");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState("nginx-proxy-manager");
+  
+  // Initialize with URL param or default
+  const productParam = searchParams.get('product');
+  const initialProductId = productParam && products.some(p => p.id === productParam) 
+    ? productParam 
+    : "nginx-proxy-manager";
+  const [selectedProductId, setSelectedProductId] = useState(initialProductId);
 
   const docContent = getDocContent(activeDocId);
   const selectedProduct = products.find(p => p.id === selectedProductId);

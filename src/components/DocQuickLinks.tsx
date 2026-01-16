@@ -1,62 +1,11 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Shield, Database, Activity, ArrowUpCircle, Wrench } from "lucide-react";
+import { Shield, Server, Package } from "lucide-react";
+import { products } from "@/data/products";
 
-const docLinks = [
-  {
-    icon: BookOpen,
-    title: "Quickstart",
-    description: "Get up and running in minutes",
-    href: "/docs/quickstart",
-    color: "text-emerald-400",
-    bgColor: "bg-emerald-400/10",
-    borderColor: "border-emerald-400/20",
-  },
-  {
-    icon: Shield,
-    title: "Security",
-    description: "Hardening & compliance details",
-    href: "/docs/security",
-    color: "text-amber-400",
-    bgColor: "bg-amber-400/10",
-    borderColor: "border-amber-400/20",
-  },
-  {
-    icon: Database,
-    title: "Backup & Restore",
-    description: "Data protection workflows",
-    href: "/docs/backup-restore",
-    color: "text-blue-400",
-    bgColor: "bg-blue-400/10",
-    borderColor: "border-blue-400/20",
-  },
-  {
-    icon: Activity,
-    title: "Monitoring",
-    description: "CloudWatch metrics & logs",
-    href: "/docs/monitoring-and-metrics",
-    color: "text-purple-400",
-    bgColor: "bg-purple-400/10",
-    borderColor: "border-purple-400/20",
-  },
-  {
-    icon: Wrench,
-    title: "Operations",
-    description: "Day-2 management tasks",
-    href: "/docs/operations",
-    color: "text-rose-400",
-    bgColor: "bg-rose-400/10",
-    borderColor: "border-rose-400/20",
-  },
-  {
-    icon: ArrowUpCircle,
-    title: "Upgrades",
-    description: "Version migration paths",
-    href: "/docs/upgrades",
-    color: "text-cyan-400",
-    bgColor: "bg-cyan-400/10",
-    borderColor: "border-cyan-400/20",
-  },
-];
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Shield,
+  Server,
+};
 
 export const DocQuickLinks = () => {
   return (
@@ -67,32 +16,66 @@ export const DocQuickLinks = () => {
             Documentation
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to deploy, secure, and operate your AMI appliances.
+            Select your appliance to access deployment guides, security details, and operational runbooks.
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
-          {docLinks.map((doc) => (
-            <Link
-              key={doc.title}
-              to={doc.href}
-              className="group p-5 rounded-xl bg-card/50 border border-border hover:border-accent/40 transition-all duration-200 hover:bg-card/80"
-            >
-              <div className="flex items-start gap-4">
-                <div className={`w-11 h-11 rounded-lg ${doc.bgColor} border ${doc.borderColor} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
-                  <doc.icon className={`w-5 h-5 ${doc.color}`} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors">
-                    {doc.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {doc.description}
-                  </p>
+          {products.map((product) => {
+            const IconComponent = iconMap[product.icon] || Package;
+            const isAvailable = !product.comingSoon;
+
+            if (isAvailable) {
+              return (
+                <Link
+                  key={product.id}
+                  to={`/docs?product=${product.id}`}
+                  className="group p-5 rounded-xl bg-card/50 border border-border hover:border-accent/40 transition-all duration-200 hover:bg-card/80"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-11 h-11 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <IconComponent className="w-5 h-5 text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors truncate">
+                        {product.name.replace(" for AWS", "").replace(" AMI", "")}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                        {product.tagline}
+                      </p>
+                      <span className="inline-flex items-center gap-1 text-xs text-accent mt-2 group-hover:underline">
+                        View Documentation →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            }
+
+            return (
+              <div
+                key={product.id}
+                className="p-5 rounded-xl bg-card/30 border border-border/50 opacity-60"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-lg bg-muted/50 border border-border/50 flex items-center justify-center flex-shrink-0">
+                    <IconComponent className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-muted-foreground truncate">
+                      {product.name.replace(" for AWS", "").replace(" AMI", "")}
+                    </h3>
+                    <p className="text-sm text-muted-foreground/70 mt-1">
+                      {product.tagline}
+                    </p>
+                    <span className="inline-block text-xs text-muted-foreground/50 mt-2">
+                      Documentation coming soon
+                    </span>
+                  </div>
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
