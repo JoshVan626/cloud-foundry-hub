@@ -1,12 +1,3 @@
----
-id: monitoring
-title: Monitoring & Metrics
-description: "CloudWatch integration for comprehensive observability of your Nginx Proxy Manager – Hardened Edition – optional but pre-configured."
-product: nginx-proxy-manager
-section: monitoring
-order: 1
----
-
 # Monitoring & Metrics
 
 This AMI includes a preconfigured Amazon CloudWatch Agent so basic logs and
@@ -15,7 +6,7 @@ with the right permissions.
 
 Product:
 
-**Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions**
+**Nginx Proxy Manager (NPM) for AWS — Production-Ready, Secure Admin Plane, Backups & Monitoring by Northstar Cloud Solutions**
 
 ---
 
@@ -78,6 +69,14 @@ Attach an **instance role** with a policy similar to the following. This uses `R
 
 - **Agent logs**: `sudo journalctl -u amazon-cloudwatch-agent.service -n 200 --no-pager`
 - If you see `AccessDenied` or `UnauthorizedOperation`, attach an instance role with the permissions above and restart the agent: `sudo systemctl restart amazon-cloudwatch-agent.service`
+
+### Disable CloudWatch shipping (optional)
+
+If you do not want to send logs or metrics to CloudWatch:
+
+```bash
+sudo systemctl disable --now amazon-cloudwatch-agent.service
+```
 
 ## What the AMI is configured to send
 

@@ -1,15 +1,6 @@
----
-id: backup-restore
-title: Backup & Restore
-description: "Protecting your Nginx Proxy Manager – Hardened Edition data and TLS certificates with built-in backup and restore tooling."
-product: nginx-proxy-manager
-section: backup
-order: 1
----
-
 # Backup & Restore
 
-Protecting your Nginx Proxy Manager (Hardened Edition) data and TLS certificates is critical.
+Protecting your Nginx Proxy Manager data and TLS certificates is critical.
 This AMI includes built-in backup and restore tooling.
 
 ---
@@ -138,6 +129,32 @@ Each backup run emits a single structured log line to stdout/journald:
 - Failure: `NORTHSTAR_BACKUP status=failure reason=<short_reason> duration_s=N`
 
 If CloudWatch Agent is configured, these lines flow to CloudWatch Logs via syslog.
+
+---
+
+## Verify backups
+
+You can run a quick integrity check against the most recent backup archive:
+
+```bash
+sudo npm-helper backup verify
+```
+
+This checks that a recent backup exists, validates archive readability, and
+confirms expected components (`/opt/npm/data`, `/opt/npm/letsencrypt`) are present.
+
+---
+
+## Restore dry-run (validation only)
+
+To validate a backup archive without modifying the instance:
+
+```bash
+sudo npm-helper restore --dry-run /var/backups/npm-YYYYMMDDHHMMSS.tar.gz
+```
+
+This prints what would be restored and fails safely if the archive does not
+contain expected NPM paths.
 
 ---
 

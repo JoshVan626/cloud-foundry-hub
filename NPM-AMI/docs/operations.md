@@ -1,13 +1,6 @@
----
-id: operations
-title: Operations
-description: "Understanding the first-boot lifecycle, CLI tools, and day-to-day operations for the Nginx Proxy Manager – Hardened Edition."
-product: nginx-proxy-manager
-section: operations
-order: 1
----
+# Nginx Proxy Manager (NPM) for AWS — Production-Ready, Secure Admin Plane, Backups & Monitoring
 
-# Operations
+**by Northstar Cloud Solutions**
 
 This AMI includes a few opinionated tools and services to make NPM easier to
 run in production.
@@ -33,7 +26,7 @@ On first boot, `npm-init.service` runs once to:
 2. Generate a secure random admin password
 3. Update the database with the new credentials
 4. Write credentials to a root-only file
-5. Update the SSH login banner (MOTD)
+5. Update the SSH login banner (MOTD) with a non-sensitive status message
 
 The wait time accounts for slow instance types or cold container pulls.
 
@@ -42,7 +35,23 @@ The wait time accounts for slow instance types or cold container pulls.
 The default admin email is `admin@example.com` (NPM's default).
 
 To use a different email, set the `NPM_ADMIN_EMAIL` environment variable before
-first boot. For example, add to `/etc/environment`:
+first boot. The init service reads `/etc/northstar/npm-init.env` if present.
+
+**EC2 user-data (cloud-init) example:**
+
+```yaml
+#cloud-config
+write_files:
+  - path: /etc/northstar/npm-init.env
+    owner: root:root
+    permissions: '0600'
+    content: |
+      NPM_ADMIN_EMAIL=admin@yourdomain.com
+runcmd:
+  - [ systemctl, daemon-reload ]
+```
+
+If you prefer, you can also set it in `/etc/environment`:
 
 ```bash
 NPM_ADMIN_EMAIL=admin@yourdomain.com
@@ -146,6 +155,7 @@ Key services:
 - `npm-init.service` – one-time first-boot initialization
 - `npm-postinit.service` – first-boot post-init health summary
 - `npm-backup.timer` – daily backup timer
+- `npm-cert-check.timer` – daily certificate expiry check
 - `amazon-cloudwatch-agent.service` – CloudWatch log shipping
 
 Basic commands:
@@ -174,20 +184,21 @@ is not coming up, check:
 
 ---
 
-## CLI: npm-helper
+## CLI: npm-helper (or northstar)
 
-`npm-helper` is installed under `/usr/local/bin`. It provides three main
-subcommands:
+`npm-helper` is installed under `/usr/local/bin`. A branded wrapper (`northstar`)
+is also available and recommended. It provides these main subcommands:
 
 ### Show current admin credentials
 
 ```bash
 sudo npm-helper show-admin
+sudo npm-helper show-creds
 ```
 
-Outputs the current admin username stored in:
-
-- the admin username (password is not displayed again after first login; see `docs/security.md`)
+Outputs the current admin username and credentials location. Credentials are
+stored at `/root/.northstar/npm-admin-credentials` (root-only). Use `show-creds`
+to display the password (root only).
 
 ### Rotate admin password
 
@@ -201,7 +212,7 @@ What it does:
 2. Generates a new strong random password.
 3. Updates the NPM `auth` table with the new bcrypt hash.
 4. Writes the new credentials to a root-only credentials file.
-5. Updates the MOTD banner (password is not re-printed after first login).
+5. Updates the MOTD banner (no secrets in MOTD).
 
 Use this whenever you want to rotate the admin password without touching the
 web UI.
@@ -217,7 +228,10 @@ Shows:
 - Docker service status
 - `npm` service status
 - Container status from `docker compose ps`
-- Last backup timestamp found under `/var/backups`
+- Initialization markers and core systemd unit states
+- Admin UI access posture (UFW allowlist)
+- Backup status (last run/success/failure)
+- Certificate expiry summary (next expiry, days remaining)
 
 This is a quick way to check if the system is healthy.
 
@@ -225,6 +239,65 @@ Additional opt-in commands:
 
 - `sudo npm-helper update-os` – run a one-click `apt-get update` + `apt-get upgrade` (may require reboot)
 - `sudo npm-helper diagnostics --json` – emit non-sensitive diagnostic JSON for support/troubleshooting
+- `sudo npm-helper admin-access enable --cidr <ip>/32` – allowlist port 81 from a trusted IP
+- `sudo npm-helper admin-access disable` – remove allowlist rules for port 81
+- `sudo npm-helper cert-check` – run the certificate expiry check immediately
+- `sudo npm-helper upgrade --dry-run` – preflight + show planned steps
+- `sudo npm-helper upgrade` – run a backup-first upgrade using the existing compose pins
+- `sudo npm-helper backup verify` – verify the latest backup archive
+- `sudo npm-helper restore --dry-run <backup>` – validate a restore without changes
+
+---
+
+## Certificate expiry monitoring
+
+A daily systemd timer checks NPM-managed certificates and logs warnings when
+any certificate is within the configured threshold.
+
+Run it manually:
+
+```bash
+sudo npm-helper cert-check
+```
+
+Configuration file (threshold days):
+
+```ini
+/etc/npm-cert-check.conf
+```
+
+To change the warning threshold, edit `threshold_days` in that file and rerun the
+check or wait for the next timer run.
+
+Disable the timer:
+
+```bash
+sudo systemctl disable --now npm-cert-check.timer
+```
+
+If CloudWatch Agent is enabled, warnings include a `NORTHSTAR_CERT_EXPIRY_WARN`
+log line for easy alerting.
+
+---
+
+## Upgrade safely
+
+Use the upgrade helper to perform a backup-first upgrade using the **existing**
+compose file pins (no automatic version changes).
+
+Dry-run preflight:
+
+```bash
+sudo npm-helper upgrade --dry-run
+```
+
+Upgrade:
+
+```bash
+sudo npm-helper upgrade
+```
+
+The command prints rollback steps using the latest backup and `npm-helper restore`.
 
 ---
 
@@ -234,6 +307,7 @@ The CloudWatch Agent is configured to ship:
 
 - `/var/log/syslog`
 - `/var/log/auth.log`
+- `/var/lib/docker/containers/*/*-json.log`
 
 into a log group named:
 
@@ -241,7 +315,7 @@ into a log group named:
 /northstar-cloud-solutions/npm
 ```
 
-with per-instance log streams (e.g. `{instance_id}-syslog`, `{instance_id}-auth`).
+with per-instance log streams (e.g. `{instance_id}-syslog`, `{instance_id}-auth`, `{instance_id}-docker`).
 
 You can view these in:
 

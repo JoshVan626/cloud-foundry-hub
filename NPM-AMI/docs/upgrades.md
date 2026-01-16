@@ -1,23 +1,14 @@
----
-id: upgrades
-title: Upgrades
-description: "How to think about upgrades for the Nginx Proxy Manager – Hardened Edition. The design philosophy is stability first."
-product: nginx-proxy-manager
-section: upgrades
-order: 1
----
-
 # Upgrades
 
 This document explains how to think about upgrades for the AMI:
 
-**Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions**
+**Nginx Proxy Manager (NPM) for AWS — Production-Ready, Secure Admin Plane, Backups & Monitoring by Northstar Cloud Solutions**
 
 The design philosophy is **stability first**:
 
 - The base OS is a hardened Ubuntu 22.04 image.
 
-- Nginx Proxy Manager (Hardened Edition) is pinned to a specific, tested Docker image tag.
+- Nginx Proxy Manager is pinned to a specific, tested Docker image tag.
 
 - You choose when to upgrade instead of things changing underneath you.
 

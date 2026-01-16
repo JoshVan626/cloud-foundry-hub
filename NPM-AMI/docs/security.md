@@ -1,12 +1,3 @@
----
-id: security-hardening
-title: Security & Hardening
-description: "The Nginx Proxy Manager – Hardened Edition AMI ships with a conservative security baseline applied out of the box."
-product: nginx-proxy-manager
-section: security
-order: 1
----
-
 # Security & Hardening
 
 This AMI ships with a conservative security baseline applied out of the box.
@@ -26,7 +17,7 @@ This AMI ships with a conservative security baseline applied out of the box.
 - You **must** use SSH keys to access the instance.
 - Logging in directly as `root` via SSH is disabled.
 - You should SSH as `ubuntu` (or another user you configure) and use `sudo`.
-- Initial admin credentials are stored in `/root/npm-admin-credentials.txt` (root-only, `0600`). Rotate the password after first login and delete the file if your policy requires it.
+- Initial admin credentials are stored in `/root/.northstar/npm-admin-credentials` (root-only, `0600`). Retrieve them with `sudo npm-helper show-creds` and rotate the password after first login.
 
 ---
 
@@ -40,8 +31,32 @@ UFW is installed and configured to:
 
   - `22/tcp` – SSH
   - `80/tcp` – HTTP
-  - `81/tcp` – NPM admin UI
   - `443/tcp` – HTTPS
+
+In your **EC2 security group**, restrict `22/tcp` (SSH) and `81/tcp` (NPM Admin UI) to your admin IP(s) or trusted CIDR ranges. Avoid `0.0.0.0/0` for admin ports.
+
+
+Port `81/tcp` (NPM Admin UI) is **restricted by default**. Do **not** expose it publicly; allowlist a single trusted IP or use an SSH tunnel. To allow access from a trusted IP:
+
+```bash
+sudo npm-helper admin-access enable --cidr <your-ip>/32
+```
+
+Disable the allowlist when finished:
+
+```bash
+sudo npm-helper admin-access disable
+```
+
+Do **not** expose port 81 to the public internet; use an SSH tunnel or a temporary single-IP allowlist.
+
+SSH tunnel example:
+
+```bash
+ssh -i /path/to/key.pem -L 8181:localhost:81 ubuntu@<instance-public-ip>
+```
+
+Then open `http://localhost:8181` in your browser.
 
 Check rules:
 
