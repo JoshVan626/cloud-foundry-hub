@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Hero } from "@/components/Hero";
+import { TrustIndicators } from "@/components/TrustIndicators";
+import { DocQuickLinks } from "@/components/DocQuickLinks";
 import { FoundryCatalog } from "@/components/FoundryCatalog";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -21,6 +23,8 @@ const Index = () => {
     <div className="min-h-screen bg-background w-full max-w-full overflow-x-hidden">
       <Navbar />
       <Hero />
+      <TrustIndicators />
+      <DocQuickLinks />
       <div id="foundry" className="w-full max-w-full">
         <FoundryCatalog />
       </div>
