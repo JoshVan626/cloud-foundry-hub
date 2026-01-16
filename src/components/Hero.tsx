@@ -10,17 +10,17 @@ const keyBenefits = [
   {
     icon: Shield,
     title: "Automated Resilience",
-    description: "Built-in atomic backups, health monitoring, and rollback-safe updates.",
+    description: "Backup-first workflows, daily checks, and clear status visibility from day one.",
   },
   {
     icon: Cog,
     title: "Defense-in-Depth Security",
-    description: "Kernel hardening, pre-configured firewalls, and Fail2Ban out of the box.",
+    description: "SSH hardening, UFW defaults, and fail2ban protection for the admin plane.",
   },
   {
     icon: Cloud,
     title: "AWS-Native Observability",
-    description: "CloudWatch Logs and S3 integration for enterprise-grade visibility.",
+    description: "Optional CloudWatch logs/metrics and optional S3 backups when IAM is configured.",
   },
 ];
 

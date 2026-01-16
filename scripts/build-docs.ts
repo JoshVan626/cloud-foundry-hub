@@ -376,9 +376,9 @@ export interface Product {
 export const products: Product[] = [
   {
     id: "nginx-proxy-manager",
-    name: "Nginx Proxy Manager – Hardened Edition",
-    shortName: "Nginx Proxy Manager (Hardened Edition)",
-    description: "Enterprise-ready reverse proxy with automated SSL and security hardening",
+    name: "Nginx Proxy Manager (NPM) for AWS",
+    shortName: "Nginx Proxy Manager (NPM) for AWS",
+    description: "Production-ready reverse proxy for AWS with a secure admin plane, backups, and optional monitoring.",
   },
 ];
 
@@ -423,4 +423,3 @@ fs.writeFileSync(outputFile, output, 'utf-8');
 console.log(`✓ Generated ${outputFile}`);
 console.log(`  - ${sections.length} sections`);
 console.log(`  - ${Object.keys(contents).length} documents`);
-
