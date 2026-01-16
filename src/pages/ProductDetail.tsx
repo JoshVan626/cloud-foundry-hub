@@ -113,23 +113,23 @@ const ProductDetail = () => {
               </ul>
             </div>
             <div className="p-6 rounded-lg bg-accent/5 border border-accent/20">
-              <h3 className="text-lg font-semibold text-accent mb-4">The Hardened Edition</h3>
+              <h3 className="text-lg font-semibold text-accent mb-4">NPM for AWS AMI</h3>
               <ul className="space-y-3 text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
-                  <span>Automated first-boot with secure defaults</span>
+                  <span>Secure first boot with root-only credentials</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
-                  <span>Defense-in-depth security from day one</span>
+                  <span>Admin access via allowlist or SSH tunnel</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
-                  <span>Atomic backups with S3 sync and rotation</span>
+                  <span>Backup & restore tooling with optional S3 sync</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-accent mt-1 flex-shrink-0" />
-                  <span>CloudWatch integration for full visibility</span>
+                  <span>Optional CloudWatch logs and metrics</span>
                 </li>
               </ul>
             </div>
@@ -205,7 +205,7 @@ const ProductDetail = () => {
           <section className="container mx-auto px-4 mb-16">
             <h2 className="text-2xl font-bold text-foreground mb-2">Infrastructure as Code</h2>
             <p className="text-muted-foreground mb-8">
-              Deploy with your existing IaC workflow. Copy the module and customize for your environment.
+              Deploy with your existing IaC workflow. Use these snippets as a starting point and tailor them to your environment.
             </p>
             <CodeSwitcher 
               terraform={product.terraform} 
@@ -219,7 +219,7 @@ const ProductDetail = () => {
           <section className="container mx-auto px-4 mb-16">
             <h2 className="text-2xl font-bold text-foreground mb-2">CLI Toolkit</h2>
             <p className="text-muted-foreground mb-8">
-              Manage your instance with the npm-helper CLI. All commands support --help for detailed usage.
+              Manage your instance with the npm-helper CLI (or the northstar wrapper). All commands support --help for detailed usage.
             </p>
             <CLIShowcase commands={product.cliCommands} />
           </section>
@@ -230,7 +230,7 @@ const ProductDetail = () => {
           <section className="container mx-auto px-4 max-w-4xl">
             <h2 className="text-2xl font-bold text-foreground mb-2">First-Boot Experience</h2>
             <p className="text-muted-foreground mb-6">
-              This is what you'll see when you first SSH into your hardened instance.
+              This is what you'll see when you first SSH into your NPM for AWS instance.
             </p>
             <div className="w-full">
               <TerminalSimulator lines={product.motd} typingSpeed={10} />

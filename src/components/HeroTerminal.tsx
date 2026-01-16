@@ -19,18 +19,18 @@ export const HeroTerminal = () => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [stopBlinking, setStopBlinking] = useState(false);
 
-  const command = "northstar-cloud deploy npm --hardened";
+  const command = "northstar-cloud deploy npm --aws";
   const fullCommand = `$ ${command}`;
 
   // Output lines (exact as specified)
   const outputLines = [
     "Initializing appliance…",
-    "Resolving: Nginx Proxy Manager (Hardened Edition)",
+    "Resolving: Nginx Proxy Manager (NPM) for AWS",
     "Target: AWS",
     "",
-    "[ 1/4 ] Applying hardened defaults…           ✓",
-    "[ 2/4 ] Wiring backups (atomic + S3-ready)…  ✓",
-    "[ 3/4 ] Enabling CloudWatch logs/metrics…    ✓",
+    "[ 1/4 ] Applying secure defaults…            ✓",
+    "[ 2/4 ] Configuring backups (local + optional S3)…   ✓",
+    "[ 3/4 ] Preparing CloudWatch (optional)…    ✓",
     "[ 4/4 ] Running first-boot checks…           ✓",
     "",
     "DEPLOY COMPLETE",
@@ -179,7 +179,7 @@ export const HeroTerminal = () => {
       return (
         <div key={index} className="whitespace-pre" style={{ minWidth: 'max-content' }}>
           <span className="text-terminal-text">Resolving: </span>
-          <span className="text-cyan-400">Nginx Proxy Manager (Hardened Edition)</span>
+          <span className="text-cyan-400">Nginx Proxy Manager (NPM) for AWS</span>
         </div>
       );
     }

@@ -23,9 +23,12 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Products</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/products/nginx-proxy-manager" className="hover:text-foreground transition-colors">Nginx Proxy Manager (Hardened Edition)</Link></li>
-              <li><Link to="/products/wordpress-hardened" className="hover:text-foreground transition-colors">WordPress (Hardened Edition)</Link></li>
-              <li><Link to="/products/wikijs-hardened" className="hover:text-foreground transition-colors">Wiki.js (Hardened Edition)</Link></li>
+              <li><Link to="/products/nginx-proxy-manager" className="hover:text-foreground transition-colors">Nginx Proxy Manager (NPM) for AWS</Link></li>
+              <li><Link to="/products/secure-vpn-gateway" className="hover:text-foreground transition-colors">Secure VPN / Zero-Trust Access Gateway AMI (Coming Soon)</Link></li>
+              <li><Link to="/products/observability-monitoring" className="hover:text-foreground transition-colors">Hardened Observability/Monitoring AMI (Coming Soon)</Link></li>
+              <li><Link to="/products/object-storage-gateway" className="hover:text-foreground transition-colors">Hardened Object Storage Gateway / Backup Appliance AMI (Coming Soon)</Link></li>
+              <li><Link to="/products/app-security-edge" className="hover:text-foreground transition-colors">App Security Edge AMI (Coming Soon)</Link></li>
+              <li><Link to="/products/identity-provider" className="hover:text-foreground transition-colors">Identity Provider / SSO Gateway AMI (Coming Soon)</Link></li>
             </ul>
           </div>
 

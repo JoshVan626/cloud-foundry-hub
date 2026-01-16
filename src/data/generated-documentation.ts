@@ -12,9 +12,9 @@ export interface Product {
 export const products: Product[] = [
   {
     id: "nginx-proxy-manager",
-    name: "Nginx Proxy Manager – Hardened Edition",
-    shortName: "Nginx Proxy Manager (Hardened Edition)",
-    description: "Enterprise-ready reverse proxy with automated SSL and security hardening",
+    name: "Nginx Proxy Manager (NPM) for AWS",
+    shortName: "Nginx Proxy Manager (NPM) for AWS",
+    description: "Production-ready reverse proxy for AWS with a secure admin plane, backups, and optional monitoring.",
   },
 ];
 
@@ -133,12 +133,12 @@ export const docContents: Record<string, DocContent> = {
   "backup-restore": {
     "id": "backup-restore",
     "title": "Backup & Restore",
-    "description": "Protecting your Nginx Proxy Manager – Hardened Edition data and TLS certificates with built-in backup and restore tooling.",
+    "description": "Protecting your Nginx Proxy Manager (NPM) for AWS data and TLS certificates with built-in backup and restore tooling.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
         "type": "paragraph",
-        "content": "Protecting your Nginx Proxy Manager (Hardened Edition) data and TLS certificates is critical.\nThis AMI includes built-in backup and restore tooling."
+        "content": "Protecting your Nginx Proxy Manager data and TLS certificates is critical.\nThis AMI includes built-in backup and restore tooling."
       },
       {
         "type": "heading",
@@ -316,6 +316,40 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "heading",
+        "content": "Verify backups"
+      },
+      {
+        "type": "paragraph",
+        "content": "You can run a quick integrity check against the most recent backup archive:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper backup verify",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "This checks that a recent backup exists, validates archive readability, and\nconfirms expected components (`/opt/npm/data`, `/opt/npm/letsencrypt`) are present."
+      },
+      {
+        "type": "heading",
+        "content": "Restore dry-run (validation only)"
+      },
+      {
+        "type": "paragraph",
+        "content": "To validate a backup archive without modifying the instance:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper restore --dry-run /var/backups/npm-YYYYMMDDHHMMSS.tar.gz",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "This prints what would be restored and fails safely if the archive does not\ncontain expected NPM paths."
+      },
+      {
+        "type": "heading",
         "content": "Optional S3 Backups (IAM Required)"
       },
       {
@@ -409,175 +443,13 @@ export const docContents: Record<string, DocContent> = {
         "type": "code",
         "content": "sudo journalctl -u npm-backup.service -n 200 --no-pager",
         "language": "bash"
-      },
-      {
-        "type": "heading",
-        "content": "Restore from a backup archive"
-      },
-      {
-        "type": "paragraph",
-        "content": "Use `npm-restore` to restore from a backup archive."
-      },
-      {
-        "type": "note",
-        "content": "⚠ **Only run this when you are comfortable overwriting the current NPM data.**",
-        "variant": "warning"
-      },
-      {
-        "type": "subheading",
-        "content": "Trust model"
-      },
-      {
-        "type": "paragraph",
-        "content": "**Only restore archives created by `npm-backup` on trusted instances.**"
-      },
-      {
-        "type": "paragraph",
-        "content": "The restore script validates archive contents before extraction and will refuse\nto extract archives containing paths outside the expected directories\n(`opt/npm/data`, `opt/npm/letsencrypt`). This security check prevents malicious\nor corrupted archives from overwriting system files like `/etc/passwd`."
-      },
-      {
-        "type": "paragraph",
-        "content": "If validation fails, you'll see:"
-      },
-      {
-        "type": "code",
-        "content": "✗ Error: Archive contains paths outside allowed directories!"
-      },
-      {
-        "type": "paragraph",
-        "content": "Do not attempt to bypass this check. The archive may be corrupted, tampered\nwith, or created by a different tool."
-      },
-      {
-        "type": "list",
-        "items": [
-          "List available backups:",
-          "Run restore:"
-        ]
-      },
-      {
-        "type": "code",
-        "content": "ls -1 /var/backups/npm-*.tar.gz",
-        "language": "bash"
-      },
-      {
-        "type": "code",
-        "content": "sudo npm-restore /var/backups/npm-YYYYMMDDHHMMSS.tar.gz",
-        "language": "bash"
-      },
-      {
-        "type": "paragraph",
-        "content": "What `npm-restore` does:"
-      },
-      {
-        "type": "list",
-        "items": [
-          "Stop the `npm` systemd service.",
-          "Move existing `/opt/npm/data` and `/opt/npm/letsencrypt` to `.bak-<timestamp>`\nsafety backups (if they exist and are non-empty).",
-          "Extract the archive from `/` so the original paths are restored.",
-          "Fix ownership on the restored directories.",
-          "Start the `npm` service.",
-          "Perform a health check against the local NPM API endpoint (port 81)."
-        ]
-      },
-      {
-        "type": "paragraph",
-        "content": "If the health check fails:"
-      },
-      {
-        "type": "list",
-        "items": [
-          "The script **does not** automatically roll back.",
-          "It prints clear instructions and tells you where the `.bak-` safety directories are, so you can manually restore them."
-        ]
-      },
-      {
-        "type": "heading",
-        "content": "Best practices"
-      },
-      {
-        "type": "list",
-        "items": [
-          "Keep `local_retention` at least `5–7` for a buffer of good backups.",
-          "Use S3 uploads in combination with IAM roles for off-instance copies.",
-          "After any major configuration change, you can force a backup:",
-          "Test `npm-restore` in a non-production environment, so you're familiar with the flow before you need it in an emergency."
-        ]
-      },
-      {
-        "type": "code",
-        "content": "sudo npm-backup",
-        "language": "bash"
-      },
-      {
-        "type": "heading",
-        "content": "Troubleshooting backup failures"
-      },
-      {
-        "type": "paragraph",
-        "content": "If backups are failing, check the last failure reason:"
-      },
-      {
-        "type": "code",
-        "content": "cat /var/lib/northstar/npm/backup-last-failure",
-        "language": "bash"
-      },
-      {
-        "type": "paragraph",
-        "content": "Or use `npm-helper status` to see the full backup status."
-      },
-      {
-        "type": "subheading",
-        "content": "Common failure reasons"
-      },
-      {
-        "type": "paragraph",
-        "content": "| Reason | Cause | Fix |\n|--------|-------|-----|\n| `concurrent_run_in_progress` | Another backup is still running | Wait for it to finish, or check for stuck processes |\n| `invalid_retention_value` | `local_retention` in config is less than 1 | Set `local_retention = 7` (or higher) in `/etc/npm-backup.conf` |\n| `cannot_create_backup_dir` | Backup directory path is invalid or permissions issue | Verify `local_backup_dir` path exists and is writable |\n| `backup_dir_not_writable` | No write permission to backup directory | Check permissions: `ls -la /var/backups` |\n| `tar_archive_failed` | Failed to create the tar archive | Check disk space: `df -h /var/backups` |\n| `backup_file_not_created` | Archive creation succeeded but file not found | Check disk space and filesystem errors |"
-      },
-      {
-        "type": "subheading",
-        "content": "S3 upload failures"
-      },
-      {
-        "type": "paragraph",
-        "content": "S3 upload failures do **not** fail the backup—the local backup is still created. Common S3 issues:"
-      },
-      {
-        "type": "list",
-        "items": [
-          "**No IAM role attached**: The instance needs an IAM role with `s3:PutObject` permission",
-          "**Bucket doesn't exist**: Verify the bucket name in `/etc/npm-backup.conf`",
-          "**Wrong region**: The bucket must be accessible from the instance's region",
-          "**AWS CLI not installed**: Check with `which aws`"
-        ]
-      },
-      {
-        "type": "paragraph",
-        "content": "To test S3 permissions manually:"
-      },
-      {
-        "type": "code",
-        "content": "# Create a test file\necho \"test\" > /tmp/s3-test.txt\n\n# Try to upload (replace with your bucket)\naws s3 cp /tmp/s3-test.txt s3://YOUR-BUCKET/test.txt\n\n# Clean up\nrm /tmp/s3-test.txt\naws s3 rm s3://YOUR-BUCKET/test.txt",
-        "language": "bash"
-      },
-      {
-        "type": "subheading",
-        "content": "Viewing backup logs"
-      },
-      {
-        "type": "paragraph",
-        "content": "Backup output goes to journald:"
-      },
-      {
-        "type": "code",
-        "content": "# Last backup run\nsudo journalctl -u npm-backup.service -n 50\n\n# Search for structured log lines\nsudo journalctl -u npm-backup.service | grep NORTHSTAR_BACKUP",
-        "language": "bash"
       }
     ]
   },
   "multi-app": {
     "id": "multi-app",
     "title": "Multi-App Setup",
-    "description": "A common use case: run multiple applications behind a single Nginx Proxy Manager – Hardened Edition instance on EC2.",
+    "description": "A common use case: run multiple applications behind a single Nginx Proxy Manager (NPM) for AWS instance on EC2.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
@@ -595,7 +467,7 @@ export const docContents: Record<string, DocContent> = {
       {
         "type": "list",
         "items": [
-          "One NPM Premium AMI instance",
+          "One Nginx Proxy Manager (NPM) for AWS AMI instance",
           "Two backend apps:\n  - `app1` on another EC2 instance at `10.0.1.10:3000`\n  - `app2` on another EC2 instance at `10.0.1.11:4000`"
         ]
       },
@@ -639,7 +511,7 @@ export const docContents: Record<string, DocContent> = {
   "monitoring": {
     "id": "monitoring",
     "title": "Monitoring & Metrics",
-    "description": "CloudWatch integration for comprehensive observability of your Nginx Proxy Manager – Hardened Edition – optional but pre-configured.",
+    "description": "CloudWatch logs and metrics for Nginx Proxy Manager (NPM) for AWS are optional and preconfigured.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
@@ -652,7 +524,7 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "paragraph",
-        "content": "**Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions**"
+        "content": "**Nginx Proxy Manager (NPM) for AWS — Production-Ready, Secure Admin Plane, Backups & Monitoring by Northstar Cloud Solutions**"
       },
       {
         "type": "heading",
@@ -718,6 +590,19 @@ export const docContents: Record<string, DocContent> = {
           "**Agent logs**: `sudo journalctl -u amazon-cloudwatch-agent.service -n 200 --no-pager`",
           "If you see `AccessDenied` or `UnauthorizedOperation`, attach an instance role with the permissions above and restart the agent: `sudo systemctl restart amazon-cloudwatch-agent.service`"
         ]
+      },
+      {
+        "type": "subheading",
+        "content": "Disable CloudWatch shipping (optional)"
+      },
+      {
+        "type": "paragraph",
+        "content": "If you do not want to send logs or metrics to CloudWatch:"
+      },
+      {
+        "type": "code",
+        "content": "sudo systemctl disable --now amazon-cloudwatch-agent.service",
+        "language": "bash"
       },
       {
         "type": "heading",
@@ -801,9 +686,13 @@ export const docContents: Record<string, DocContent> = {
   "operations": {
     "id": "operations",
     "title": "Operations",
-    "description": "Understanding the first-boot lifecycle, CLI tools, and day-to-day operations for the Nginx Proxy Manager – Hardened Edition.",
+    "description": "First-boot lifecycle, CLI helpers, systemd services, and day-to-day operations for Nginx Proxy Manager (NPM) for AWS.",
     "productId": "nginx-proxy-manager",
     "content": [
+      {
+        "type": "paragraph",
+        "content": "**by Northstar Cloud Solutions**"
+      },
       {
         "type": "paragraph",
         "content": "This AMI includes a few opinionated tools and services to make NPM easier to\nrun in production."
@@ -846,7 +735,7 @@ export const docContents: Record<string, DocContent> = {
           "Generate a secure random admin password",
           "Update the database with the new credentials",
           "Write credentials to a root-only file",
-          "Update the SSH login banner (MOTD)"
+          "Update the SSH login banner (MOTD) with a non-sensitive status message"
         ]
       },
       {
@@ -863,7 +752,20 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "paragraph",
-        "content": "To use a different email, set the `NPM_ADMIN_EMAIL` environment variable before\nfirst boot. For example, add to `/etc/environment`:"
+        "content": "To use a different email, set the `NPM_ADMIN_EMAIL` environment variable before\nfirst boot. The init service reads `/etc/northstar/npm-init.env` if present."
+      },
+      {
+        "type": "paragraph",
+        "content": "**EC2 user-data (cloud-init) example:**"
+      },
+      {
+        "type": "code",
+        "content": "#cloud-config\nwrite_files:\n  - path: /etc/northstar/npm-init.env\n    owner: root:root\n    permissions: '0600'\n    content: |\n      NPM_ADMIN_EMAIL=admin@yourdomain.com\nruncmd:\n  - [ systemctl, daemon-reload ]",
+        "language": "yaml"
+      },
+      {
+        "type": "paragraph",
+        "content": "If you prefer, you can also set it in `/etc/environment`:"
       },
       {
         "type": "code",
@@ -980,6 +882,7 @@ export const docContents: Record<string, DocContent> = {
           "`npm-init.service` – one-time first-boot initialization",
           "`npm-postinit.service` – first-boot post-init health summary",
           "`npm-backup.timer` – daily backup timer",
+          "`npm-cert-check.timer` – daily certificate expiry check",
           "`amazon-cloudwatch-agent.service` – CloudWatch log shipping"
         ]
       },
@@ -1006,11 +909,11 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "heading",
-        "content": "CLI: npm-helper"
+        "content": "CLI: npm-helper (or northstar)"
       },
       {
         "type": "paragraph",
-        "content": "`npm-helper` is installed under `/usr/local/bin`. It provides three main\nsubcommands:"
+        "content": "`npm-helper` is installed under `/usr/local/bin`. A branded wrapper (`northstar`)\nis also available and recommended. It provides these main subcommands:"
       },
       {
         "type": "subheading",
@@ -1018,18 +921,12 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "code",
-        "content": "sudo npm-helper show-admin",
+        "content": "sudo npm-helper show-admin\nsudo npm-helper show-creds --yes",
         "language": "bash"
       },
       {
         "type": "paragraph",
-        "content": "Outputs the current admin username stored in:"
-      },
-      {
-        "type": "list",
-        "items": [
-          "the admin username (password is not displayed again after first login; see `docs/security.md`)"
-        ]
+        "content": "Outputs the current admin username and credentials location. Credentials are\nstored at `/root/.northstar/npm-admin-credentials` (root-only). Use `show-creds`\nto display the password (root only)."
       },
       {
         "type": "subheading",
@@ -1051,7 +948,7 @@ export const docContents: Record<string, DocContent> = {
           "Generates a new strong random password.",
           "Updates the NPM `auth` table with the new bcrypt hash.",
           "Writes the new credentials to a root-only credentials file.",
-          "Updates the MOTD banner (password is not re-printed after first login)."
+          "Updates the MOTD banner (no secrets in MOTD)."
         ]
       },
       {
@@ -1077,7 +974,10 @@ export const docContents: Record<string, DocContent> = {
           "Docker service status",
           "`npm` service status",
           "Container status from `docker compose ps`",
-          "Last backup timestamp found under `/var/backups`"
+          "Initialization markers and core systemd unit states",
+          "Admin UI access posture (UFW allowlist)",
+          "Backup status (last run/success/failure)",
+          "Certificate expiry summary (next expiry, days remaining)"
         ]
       },
       {
@@ -1092,8 +992,88 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "`sudo npm-helper update-os` – run a one-click `apt-get update` + `apt-get upgrade` (may require reboot)",
-          "`sudo npm-helper diagnostics --json` – emit non-sensitive diagnostic JSON for support/troubleshooting"
+          "`sudo npm-helper diagnostics --json` – emit non-sensitive diagnostic JSON for support/troubleshooting",
+          "`sudo npm-helper admin-access enable --cidr <ip>/32` – allowlist port 81 from a trusted IP",
+          "`sudo npm-helper admin-access disable` – remove allowlist rules for port 81",
+          "`sudo npm-helper cert-check` – run the certificate expiry check immediately",
+          "`sudo npm-helper upgrade --dry-run` – preflight + show planned steps",
+          "`sudo npm-helper upgrade` – run a backup-first upgrade using the existing compose pins",
+          "`sudo npm-helper backup verify` – verify the latest backup archive",
+          "`sudo npm-helper restore --dry-run <backup>` – validate a restore without changes"
         ]
+      },
+      {
+        "type": "heading",
+        "content": "Certificate expiry monitoring"
+      },
+      {
+        "type": "paragraph",
+        "content": "A daily systemd timer checks NPM-managed certificates and logs warnings when\nany certificate is within the configured threshold."
+      },
+      {
+        "type": "paragraph",
+        "content": "Run it manually:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper cert-check",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "Configuration file (threshold days):"
+      },
+      {
+        "type": "code",
+        "content": "/etc/npm-cert-check.conf",
+        "language": "ini"
+      },
+      {
+        "type": "paragraph",
+        "content": "To change the warning threshold, edit `threshold_days` in that file and rerun the\ncheck or wait for the next timer run."
+      },
+      {
+        "type": "paragraph",
+        "content": "Disable the timer:"
+      },
+      {
+        "type": "code",
+        "content": "sudo systemctl disable --now npm-cert-check.timer",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "If CloudWatch Agent is enabled, warnings include a `NORTHSTAR_CERT_EXPIRY_WARN`\nlog line for easy alerting."
+      },
+      {
+        "type": "heading",
+        "content": "Upgrade safely"
+      },
+      {
+        "type": "paragraph",
+        "content": "Use the upgrade helper to perform a backup-first upgrade using the **existing**\ncompose file pins (no automatic version changes)."
+      },
+      {
+        "type": "paragraph",
+        "content": "Dry-run preflight:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper upgrade --dry-run",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "Upgrade:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper upgrade",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "The command prints rollback steps using the latest backup and `npm-helper restore`."
       },
       {
         "type": "heading",
@@ -1107,7 +1087,8 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "`/var/log/syslog`",
-          "`/var/log/auth.log`"
+          "`/var/log/auth.log`",
+          "`/var/lib/docker/containers/*/*-json.log`"
         ]
       },
       {
@@ -1121,7 +1102,7 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "paragraph",
-        "content": "with per-instance log streams (e.g. `{instance_id}-syslog`, `{instance_id}-auth`)."
+        "content": "with per-instance log streams (e.g. `{instance_id}-syslog`, `{instance_id}-auth`, `{instance_id}-docker`)."
       },
       {
         "type": "paragraph",
@@ -1307,17 +1288,25 @@ export const docContents: Record<string, DocContent> = {
   "quickstart": {
     "id": "quickstart",
     "title": "Quickstart",
-    "description": "Go from AMI to a running Nginx Proxy Manager – Hardened Edition admin panel in minutes.",
+    "description": "Go from AMI to a running Nginx Proxy Manager (NPM) for AWS admin panel in minutes.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
         "type": "paragraph",
-        "content": "This guide walks you from **nothing** to a working Nginx Proxy Manager (Hardened Edition) admin\npanel on AWS using the Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions."
+        "content": "**by Northstar Cloud Solutions**"
+      },
+      {
+        "type": "paragraph",
+        "content": "This guide walks you from **nothing** to a working Nginx Proxy Manager admin\npanel on AWS using the Nginx Proxy Manager (NPM) for AWS AMI by Northstar Cloud Solutions."
       },
       {
         "type": "note",
         "content": "Assumes: you’re familiar with launching EC2 instances and security groups.",
         "variant": "info"
+      },
+      {
+        "type": "paragraph",
+        "content": "This is a server-only AMI (no desktop GUI). Use SSH or EC2 Instance Connect for access and administration."
       },
       {
         "type": "heading",
@@ -1327,13 +1316,21 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "In the AWS Console, go to **EC2 → AMIs**.",
-          "Select the **Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions**.",
+          "Select the **Nginx Proxy Manager (NPM) for AWS — Production-Ready, Secure Admin Plane, Backups & Monitoring** AMI.",
           "Click **Launch instance**.",
           "Choose an instance type:\n  - For testing: `t3.micro` / `t3.small`\n  - For light production: `t3.medium` or higher (depending on traffic)",
           "Select / create a key pair.",
-          "Configure **network and security group** to allow:\n  - `22/tcp` – SSH\n  - `80/tcp` – HTTP\n  - `81/tcp` – NPM admin UI\n  - `443/tcp` – HTTPS",
+          "Configure **network and security group** to allow:\n  - `22/tcp` – SSH (restricted to your admin IP; use AdminCidr/admin_cidrs in IaC)\n  - `80/tcp` – HTTP (public)\n  - `443/tcp` – HTTPS (public)\n  - `81/tcp` – NPM admin UI (**do not** make public; allowlist your IP or use an SSH tunnel)",
           "Launch the instance."
         ]
+      },
+      {
+        "type": "heading",
+        "content": "Expected first boot timeline (2–5 minutes)"
+      },
+      {
+        "type": "paragraph",
+        "content": "On first boot, the instance initializes NPM, generates admin credentials, and starts the stack. This usually completes in **2–5 minutes** depending on instance size and image pull speed."
       },
       {
         "type": "heading",
@@ -1347,8 +1344,7 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "SSH in as `ubuntu`:",
-          "On login, you will see a **MOTD banner** that looks like:",
-          "Credentials are shown on the **first SSH login** via the MOTD banner. For security, they are not re-printed on future logins.\nIf you need to retrieve or rotate credentials later, see **Security** (`docs/security.md`) and use `sudo npm-helper rotate-admin`."
+          "On login, you will see a **MOTD banner** similar to:"
         ]
       },
       {
@@ -1358,18 +1354,44 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "code",
-        "content": "Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions\n\nAdmin URL: http://<instance-ip>:81\nUsername: admin@example.com\nPassword: <generated-strong-password> (shown on first login only)",
+        "content": "Nginx Proxy Manager (NPM) for AWS by Northstar Cloud Solutions\n\n Admin URL: http://<instance-ip>:81\n Username: admin@example.com\n NPM initialized: credentials stored at /root/.northstar/npm-admin-credentials\n Run: sudo npm-helper show-creds --yes",
         "language": "text"
-      },
-      {
-        "type": "heading",
-        "content": "3. Log into Nginx Proxy Manager (Hardened Edition)"
       },
       {
         "type": "list",
         "items": [
-          "Open your browser to:",
-          "Log in with the **username and password** from the MOTD or credentials file.",
+          "Credentials are **not printed in MOTD**. Retrieve them with:\nThis command is **root-only** (use `sudo`).\nIf you need to rotate credentials later, see **Security** (`docs/security.md`) and use `sudo npm-helper rotate-admin`.\nUse `northstar` (recommended) or `npm-helper` directly for admin commands."
+        ]
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper show-creds --yes",
+        "language": "bash"
+      },
+      {
+        "type": "heading",
+        "content": "Day 0 checklist (tight, repeatable flow)"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Wait **2–5 minutes** for first boot initialization.",
+          "Connect via SSH or EC2 Instance Connect (browser terminal).",
+          "Run: `sudo npm-helper status`",
+          "Run: `sudo npm-helper show-creds --yes`",
+          "Access the Admin UI safely (allowlist your IP or use an SSH tunnel; **do not** expose port 81 publicly).",
+          "Optional validation:\n  - `sudo npm-helper backup verify`\n  - `sudo npm-helper cert-check`\n  - `sudo npm-helper upgrade --dry-run`"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "3. Log into Nginx Proxy Manager"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Open your browser to (after allowlisting your IP or establishing an SSH tunnel):",
+          "Log in with the **username and password** from the credentials file.",
           "You’re now in the NPM admin interface."
         ]
       },
@@ -1377,6 +1399,28 @@ export const docContents: Record<string, DocContent> = {
         "type": "code",
         "content": "http://<instance-public-ip>:81",
         "language": "text"
+      },
+      {
+        "type": "paragraph",
+        "content": "**Secure admin plane tip:** Do not expose port `81` to the internet. Use an SSH tunnel or allowlist a single trusted IP temporarily:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper admin-access enable --cidr <your-ip>/32",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "SSH tunnel example (recommended when port 81 is not open in the security group):"
+      },
+      {
+        "type": "code",
+        "content": "ssh -i /path/to/key.pem -L 8181:localhost:81 ubuntu@<instance-public-ip>",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "Then open `http://localhost:8181` in your browser."
       },
       {
         "type": "heading",
@@ -1393,6 +1437,32 @@ export const docContents: Record<string, DocContent> = {
       {
         "type": "code",
         "content": "sudo systemctl status amazon-cloudwatch-agent --no-pager\nsudo journalctl -u amazon-cloudwatch-agent -n 200 --no-pager",
+        "language": "bash"
+      },
+      {
+        "type": "heading",
+        "content": "Logging disclosure (CloudWatch optional)"
+      },
+      {
+        "type": "paragraph",
+        "content": "When an instance role is attached, the CloudWatch agent can ship:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "`/var/log/syslog`",
+          "`/var/log/auth.log`",
+          "Docker container logs (`/var/lib/docker/containers/*/*-json.log`)",
+          "Basic system metrics (CPU, memory, disk, network)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": "To disable CloudWatch shipping:"
+      },
+      {
+        "type": "code",
+        "content": "sudo systemctl disable --now amazon-cloudwatch-agent.service",
         "language": "bash"
       },
       {
@@ -1435,13 +1505,30 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "heading",
+        "content": "Verify installation"
+      },
+      {
+        "type": "paragraph",
+        "content": "Run these two commands on a fresh instance:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper status\nsudo npm-helper cert-check\nsudo journalctl -u npm-init.service -b --no-pager | tail -n 50",
+        "language": "bash"
+      },
+      {
+        "type": "heading",
         "content": "Next steps"
       },
       {
         "type": "list",
         "items": [
           "See **Operations** for CLI usage and logs.",
+          "See **Security** for SSH, firewall, and admin access posture.",
           "See **Backup & Restore** to set up backups (local + S3).",
+          "See **Monitoring & Metrics** for CloudWatch logs/metrics.",
+          "See **Troubleshooting** for first-boot recovery and admin UI access checks.",
+          "See **Upgrades** for upgrade guidance.",
           "See **Examples: Multi-App Setup** to host multiple apps behind NPM."
         ]
       }
@@ -1450,7 +1537,7 @@ export const docContents: Record<string, DocContent> = {
   "security-hardening": {
     "id": "security-hardening",
     "title": "Security & Hardening",
-    "description": "The Nginx Proxy Manager – Hardened Edition AMI ships with a conservative security baseline applied out of the box.",
+    "description": "Conservative security defaults, SSH hardening, firewall rules, and admin access posture for Nginx Proxy Manager (NPM) for AWS.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
@@ -1481,7 +1568,7 @@ export const docContents: Record<string, DocContent> = {
           "You **must** use SSH keys to access the instance.",
           "Logging in directly as `root` via SSH is disabled.",
           "You should SSH as `ubuntu` (or another user you configure) and use `sudo`.",
-          "Initial admin credentials are stored in `/root/npm-admin-credentials.txt` (root-only, `0600`). Rotate the password after first login and delete the file if your policy requires it."
+          "Initial admin credentials are stored in `/root/.northstar/npm-admin-credentials` (root-only, `0600`). Retrieve them with `sudo npm-helper show-creds --yes` and rotate the password after first login."
         ]
       },
       {
@@ -1497,8 +1584,47 @@ export const docContents: Record<string, DocContent> = {
         "items": [
           "Deny all incoming connections by default",
           "Allow all outgoing connections by default",
-          "Allow only:\n  - `22/tcp` – SSH\n  - `80/tcp` – HTTP\n  - `81/tcp` – NPM admin UI\n  - `443/tcp` – HTTPS"
+          "Allow only:\n  - `22/tcp` – SSH\n  - `80/tcp` – HTTP\n  - `443/tcp` – HTTPS"
         ]
+      },
+      {
+        "type": "paragraph",
+        "content": "In your **EC2 security group**, restrict `22/tcp` (SSH) and `81/tcp` (NPM Admin UI) to your admin IP(s) or trusted CIDR ranges. Avoid `0.0.0.0/0` for admin ports."
+      },
+      {
+        "type": "paragraph",
+        "content": "Port `81/tcp` (NPM Admin UI) is **restricted by default**. Do **not** expose it publicly; allowlist a single trusted IP or use an SSH tunnel. To allow access from a trusted IP:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper admin-access enable --cidr <your-ip>/32",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "Disable the allowlist when finished:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper admin-access disable",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "Do **not** expose port 81 to the public internet; use an SSH tunnel or a temporary single-IP allowlist."
+      },
+      {
+        "type": "paragraph",
+        "content": "SSH tunnel example:"
+      },
+      {
+        "type": "code",
+        "content": "ssh -i /path/to/key.pem -L 8181:localhost:81 ubuntu@<instance-public-ip>",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "Then open `http://localhost:8181` in your browser."
       },
       {
         "type": "paragraph",
@@ -1655,7 +1781,7 @@ export const docContents: Record<string, DocContent> = {
   "troubleshooting": {
     "id": "troubleshooting",
     "title": "Troubleshooting",
-    "description": "Common issues and how to debug them for the Nginx Proxy Manager – Hardened Edition.",
+    "description": "Common issues and debugging steps for Nginx Proxy Manager (NPM) for AWS.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
@@ -1758,10 +1884,10 @@ export const docContents: Record<string, DocContent> = {
       {
         "type": "list",
         "items": [
-          "The admin password is shown **only once** on the first SSH login (MOTD).",
           "Credentials are stored in a root-only file (see `docs/security.md`).",
-          "`npm-helper show-admin` does **not** print the password.",
-          "If you missed the initial password, rotate credentials:\n  - `sudo npm-helper rotate-admin`"
+          "`npm-helper show-admin` prints the username and file location.",
+          "`npm-helper show-creds --yes` prints the stored credentials (root only).",
+          "If you want a fresh password, rotate credentials:\n  - `sudo npm-helper rotate-admin`"
         ]
       },
       {
@@ -1788,8 +1914,8 @@ export const docContents: Record<string, DocContent> = {
       {
         "type": "list",
         "items": [
-          "Check security group:\n  - Ensure `81/tcp` is allowed from your IP or CIDR.",
-          "Check UFW on the instance:\nMake sure port 81 appears as allowed.",
+          "Check security group:\n  - Ensure `81/tcp` is allowed from your IP or CIDR (never open to the internet).",
+          "Check UFW on the instance:\nMake sure port 81 appears as allowed from your IP.\nTo allowlist your IP using the helper:",
           "Check services:",
           "Check Docker containers:"
         ]
@@ -1797,6 +1923,11 @@ export const docContents: Record<string, DocContent> = {
       {
         "type": "code",
         "content": "sudo ufw status numbered",
+        "language": "bash"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper admin-access enable --cidr <your-ip>/32",
         "language": "bash"
       },
       {
@@ -1830,6 +1961,7 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "Show current username:",
+          "Show stored credentials (root only):",
           "Force a rotation (generates a new password):"
         ]
       },
@@ -1840,12 +1972,17 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "code",
+        "content": "sudo npm-helper show-creds --yes",
+        "language": "bash"
+      },
+      {
+        "type": "code",
         "content": "sudo npm-helper rotate-admin",
         "language": "bash"
       },
       {
         "type": "paragraph",
-        "content": "For security, passwords are not re-printed on login. See `docs/security.md` for where the credentials are stored and how to handle them safely."
+        "content": "For security, passwords are not printed on login. See `docs/security.md` for where the credentials are stored and how to handle them safely."
       },
       {
         "type": "heading",
@@ -1869,6 +2006,23 @@ export const docContents: Record<string, DocContent> = {
       {
         "type": "paragraph",
         "content": "Remember: even if S3 upload fails, local backups are still created in\n`local_backup_dir`."
+      },
+      {
+        "type": "heading",
+        "content": "Backup verification or restore validation"
+      },
+      {
+        "type": "paragraph",
+        "content": "If you want confidence in the latest backup or need to confirm an archive\nbefore restore:"
+      },
+      {
+        "type": "code",
+        "content": "sudo npm-helper backup verify\nsudo npm-helper restore --dry-run /var/backups/npm-YYYYMMDDHHMMSS.tar.gz",
+        "language": "bash"
+      },
+      {
+        "type": "paragraph",
+        "content": "These checks are non-destructive and provide a quick sanity check."
       },
       {
         "type": "heading",
@@ -1919,7 +2073,7 @@ export const docContents: Record<string, DocContent> = {
   "upgrades": {
     "id": "upgrades",
     "title": "Upgrades",
-    "description": "How to think about upgrades for the Nginx Proxy Manager – Hardened Edition. The design philosophy is stability first.",
+    "description": "Stability-first upgrade guidance for the Nginx Proxy Manager (NPM) for AWS AMI.",
     "productId": "nginx-proxy-manager",
     "content": [
       {
@@ -1928,7 +2082,7 @@ export const docContents: Record<string, DocContent> = {
       },
       {
         "type": "paragraph",
-        "content": "**Nginx Proxy Manager – Hardened Edition (Ubuntu 22.04) by Northstar Cloud Solutions**"
+        "content": "**Nginx Proxy Manager (NPM) for AWS — Production-Ready, Secure Admin Plane, Backups & Monitoring by Northstar Cloud Solutions**"
       },
       {
         "type": "paragraph",
@@ -1938,7 +2092,7 @@ export const docContents: Record<string, DocContent> = {
         "type": "list",
         "items": [
           "The base OS is a hardened Ubuntu 22.04 image.",
-          "Nginx Proxy Manager (Hardened Edition) is pinned to a specific, tested Docker image tag.",
+          "Nginx Proxy Manager is pinned to a specific, tested Docker image tag.",
           "You choose when to upgrade instead of things changing underneath you."
         ]
       },
