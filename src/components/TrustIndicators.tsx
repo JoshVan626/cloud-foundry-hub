@@ -3,8 +3,8 @@ import { Shield, Clock, FileText, Award } from "lucide-react";
 const indicators = [
   {
     icon: Shield,
-    label: "CIS-Hardened",
-    description: "Security benchmarks",
+    label: "Security-Hardened",
+    description: "Kernel & network hardening",
   },
   {
     icon: Clock,
